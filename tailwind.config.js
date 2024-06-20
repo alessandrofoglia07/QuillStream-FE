@@ -7,12 +7,18 @@ const config = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter', ...defaultTheme.fontFamily.sans]
+                sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', ...defaultTheme.fontFamily.sans]
             },
             screens: {
                 '-md': { max: '767px' },
                 '-sm': { max: '639px' },
                 '-lg': { max: '1023px' }
+            },
+            borderRadius: {
+                llg: '10px'
+            },
+            backgroundColor: {
+                'light-grey': '#2D2D2D'
             }
         }
     },
