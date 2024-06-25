@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { ZodError, z } from 'zod';
+import { ZodError } from 'zod';
+import { formSchemaSubmit } from '@/utils/schemas/authSchemas';
+import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
+import { userPool } from '@/utils/userPool';
+import { useNavigate } from 'react-router-dom';
 
 interface Form {
     name: string;
@@ -7,21 +11,9 @@ interface Form {
     password: string;
 }
 
-const formSchemaSubmit = z.object({
-    name: z.string().min(3, 'Name must be at least 3 characters long.').max(32, 'Name must not exceed 32 characters.'),
-    email: z.string().email('Invalid email address. Did you make a typo?'),
-    password: z
-        .string()
-        .min(6, 'Password must be at least 6 characters long.')
-        .refine((password) => {
-            return /[a-z]/.test(password);
-        }, 'Password must contain at least one lowercase letter.')
-        .refine((password) => {
-            return /[0-9]/.test(password);
-        }, 'Password must contain at least one number.')
-});
-
 const RegisterPage: React.FC = () => {
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState<Form>({
         name: '',
         email: '',
@@ -39,6 +31,16 @@ const RegisterPage: React.FC = () => {
         try {
             formSchemaSubmit.parse(formData);
             setError(null);
+
+            const email = new CognitoUserAttribute({ Name: 'email', Value: formData.email });
+
+            userPool.signUp(formData.name, formData.password, [email], [], (err) => {
+                if (err) {
+                    setError(err.message || 'An error occurred. Please try again.');
+                } else {
+                    navigate(`/account/confirm?username=${formData.name}`);
+                }
+            });
         } catch (err) {
             if (err instanceof ZodError) {
                 setError(err.errors[0]?.message || 'An error occurred. Please try again.');
