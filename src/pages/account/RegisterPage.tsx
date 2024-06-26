@@ -36,9 +36,10 @@ const RegisterPage: React.FC = () => {
 
             userPool.signUp(formData.name, formData.password, [email], [], (err) => {
                 if (err) {
+                    console.log(err);
                     setError(err.message || 'An error occurred. Please try again.');
                 } else {
-                    navigate(`/account/confirm?username=${formData.name}`);
+                    navigate(`/account/confirm?name=${formData.name}`);
                 }
             });
         } catch (err) {
