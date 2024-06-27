@@ -38,7 +38,7 @@ const ConfirmPage = () => {
                 setError(err.message || 'An error occurred. Please try again.');
             } else {
                 setError(null);
-                navigate('/account/login');
+                navigate('/account/login', { state: { message: 'Account successfully verified. Please log in.' } });
             }
         });
     };
@@ -82,14 +82,14 @@ const ConfirmPage = () => {
                         onChange={handleChange}
                     />
                 </form>
-                {error && <h6 className='h-4 py-6 text-center text-red-400'>{error}</h6>}
+                {error && <h6 className='min-h-4 py-6 text-center text-red-400'>{error}</h6>}
                 <p className='pb-4 pt-2 text-center'>
                     Having trouble?{' '}
                     <span onClick={handleResend} className='text-taupe cursor-pointer hover:underline'>
                         Resend code
                     </span>
                 </p>
-                {resendCodeMsg && <h6 className='h-4 py-6 text-center'>{resendCodeMsg}</h6>}
+                {resendCodeMsg && <h6 className='min-h-4 py-6 text-center'>{resendCodeMsg}</h6>}
                 <button
                     disabled={code.length === 0}
                     className='mt-4 w-2/3 rounded-llg border border-gray-600/50 bg-light-grey/70 px-16 py-3 transition-colors duration-75 disabled:bg-light-grey disabled:text-white/60'
