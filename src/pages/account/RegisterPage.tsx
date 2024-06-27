@@ -4,6 +4,7 @@ import { formSchemaSubmit } from '@/utils/schemas/authSchemas';
 import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import { userPool } from '@/utils/userPool';
 import { useNavigate } from 'react-router-dom';
+import PasswordInput from '@/components/PasswordInput';
 
 interface Form {
     name: string;
@@ -61,10 +62,9 @@ const RegisterPage: React.FC = () => {
                     spellCheck={false}>
                     <input type='text' name='name' placeholder='Name' value={formData.name} onChange={handleChange} />
                     <input type='email' name='email' placeholder='Email' value={formData.email} onChange={handleChange} />
-                    <input type='password' name='password' placeholder='Password' value={formData.password} onChange={handleChange} />
+                    <PasswordInput name='password' value={formData.password} onChange={handleChange} />
                 </form>
-                <button className='my-4 w-2/3 rounded-llg bg-transparent py-3 text-white/60 transition-colors duration-75 hover:bg-light-grey'>Forgot Password</button>
-                {error && <h6 className='h-4 py-6 text-center text-red-400'>{error}</h6>}
+                {error && <h6 className='min-h-4 py-6 text-center text-red-400'>{error}</h6>}
                 <button
                     disabled={Object.values(formData).some((field) => field.length === 0)}
                     className='mt-4 w-2/3 rounded-llg border border-gray-600/50 bg-light-grey/70 px-16 py-3 transition-colors duration-75 disabled:bg-light-grey disabled:text-white/60'
