@@ -1,6 +1,6 @@
-import { PropsWithChildren, createContext } from 'react';
+import { type PropsWithChildren, createContext } from 'react';
 import { userPool } from '@/utils/userPool';
-import { AuthenticationDetails, CognitoUser, CognitoUserSession, ICognitoStorage } from 'amazon-cognito-identity-js';
+import { AuthenticationDetails, CognitoUser, CognitoUserSession, type ICognitoStorage } from 'amazon-cognito-identity-js';
 import { passwordSchema } from '@/utils/schemas/authSchemas';
 
 interface IAuthContext {

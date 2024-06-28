@@ -19,6 +19,9 @@ const config = {
             },
             backgroundColor: {
                 'light-grey': '#2D2D2D'
+            },
+            textColor: {
+                'light-grey': '#2D2D2D'
             }
         }
     },
