@@ -17,12 +17,7 @@ const NotificationContext = createContext<INotificationContext>({} as INotificat
 const Notification = ({ children }: PropsWithChildren) => {
     const notificationRef = useRef<HTMLDivElement | null>(null);
 
-    const [notification, setNotificationState] = useState<TimeoutNotification | null>({
-        message: 'An error occurred. Please try again.',
-        type: 'error',
-        timeout: null,
-        duration: -1
-    });
+    const [notification, setNotificationState] = useState<TimeoutNotification | null>(null);
 
     const clearNotification = () => {
         notificationRef.current?.classList.add('notification-exit-animation');
