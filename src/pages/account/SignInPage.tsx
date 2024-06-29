@@ -1,5 +1,8 @@
 import PasswordInput from '@/components/PasswordInput';
-import React, { useState } from 'react';
+import { AccountContext } from '@/context/AccountContext';
+import useRedirectToAccount from '@/hooks/useRedirectToAccount';
+import { handleError } from '@/utils/handleError';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface Form {
@@ -8,19 +11,29 @@ interface Form {
 }
 
 const SignInPage: React.FC = () => {
+    useRedirectToAccount();
     const navigate = useNavigate();
+    const { authenticate } = useContext(AccountContext);
 
     const [formData, setFormData] = useState<Form>({
         nameOrEmail: '',
         password: ''
     });
+    const [error, setError] = useState<string | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
+
+        try {
+            await authenticate(formData.nameOrEmail, formData.password);
+            navigate('/');
+        } catch (err) {
+            handleError(err, setError);
+        }
     };
 
     const handleForgotPassword = () => {
@@ -53,6 +66,7 @@ const SignInPage: React.FC = () => {
                     onClick={handleSubmit}>
                     Sign In
                 </button>
+                {error && <h6 className='mt-2 min-h-4 text-center text-red-400'>{error}</h6>}
                 <button onClick={redirectToCreateAnAccount} className='mt-2 rounded-llg bg-transparent px-4 py-2 text-white/60 transition-colors duration-75 hover:bg-light-grey'>
                     Create an Account
                 </button>

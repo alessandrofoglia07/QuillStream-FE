@@ -1,10 +1,10 @@
 import { type PropsWithChildren, createContext } from 'react';
 import { userPool } from '@/utils/userPool';
-import { AuthenticationDetails, CognitoUser, CognitoUserSession, type ICognitoStorage } from 'amazon-cognito-identity-js';
+import { AuthenticationDetails, CognitoUser, CognitoUserSession } from 'amazon-cognito-identity-js';
 import { passwordSchema } from '@/utils/schemas/authSchemas';
 
 interface IAuthContext {
-    authenticate: (Username: string, Password: string, Storage: ICognitoStorage) => Promise<CognitoUserSession>;
+    authenticate: (Username: string, Password: string) => Promise<CognitoUserSession>;
     getSession: () => Promise<CognitoUserSession | null>;
     logout: () => void;
 }
@@ -25,12 +25,10 @@ const Account = ({ children }: PropsWithChildren) => {
 
     const authenticate = async (UsernameOrEmail: string, Password: string) => {
         return await new Promise<CognitoUserSession>((resolve, reject) => {
-            const validate = passwordSchema.safeParse(Password);
-
             if (!UsernameOrEmail || !Password) {
                 reject('Please fill in all fields.');
-            } else if (!validate.success) {
-                reject(validate.error.errors[0]?.message);
+            } else if (!passwordSchema.safeParse(Password).success) {
+                reject('Invalid password.');
             } else {
                 const cognitoUser = new CognitoUser({ Username: UsernameOrEmail, Pool: userPool });
 
