@@ -1,6 +1,8 @@
 import PasswordInput from '@/components/PasswordInput';
 import { AccountContext } from '@/context/AccountContext';
+import { NotificationContext } from '@/context/NotificationContext';
 import useRedirectToAccount from '@/hooks/useRedirectToAccount';
+import { Notification } from '@/types';
 import { handleError } from '@/utils/handleError';
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +16,7 @@ const SignInPage: React.FC = () => {
     useRedirectToAccount();
     const navigate = useNavigate();
     const { authenticate } = useContext(AccountContext);
+    const { setNotification } = useContext(NotificationContext);
 
     const [formData, setFormData] = useState<Form>({
         nameOrEmail: '',
@@ -30,6 +33,11 @@ const SignInPage: React.FC = () => {
 
         try {
             await authenticate(formData.nameOrEmail, formData.password);
+            const notification: Notification = {
+                message: 'Successfully signed in. Welcome to QuillStream.',
+                type: 'success'
+            };
+            setNotification(notification);
             navigate('/');
         } catch (err) {
             handleError(err, setError);

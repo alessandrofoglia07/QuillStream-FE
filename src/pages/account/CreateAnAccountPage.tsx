@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { ZodError } from 'zod';
+import React, { useContext, useState } from 'react';
 import { formSchemaSubmit } from '@/utils/schemas/authSchemas';
 import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import { userPool } from '@/utils/userPool';
 import { useNavigate } from 'react-router-dom';
 import PasswordInput from '@/components/PasswordInput';
 import useRedirectToAccount from '@/hooks/useRedirectToAccount';
+import { NotificationContext } from '@/context/NotificationContext';
+import type { Notification } from '@/types';
+import { handleError } from '@/utils/handleError';
 
 interface Form {
     name: string;
@@ -16,6 +18,7 @@ interface Form {
 const CreateAnAccountPage: React.FC = () => {
     useRedirectToAccount();
     const navigate = useNavigate();
+    const { setNotification } = useContext(NotificationContext);
 
     const [formData, setFormData] = useState<Form>({
         name: '',
@@ -42,13 +45,16 @@ const CreateAnAccountPage: React.FC = () => {
                     console.log(err);
                     setError(err.message || 'An error occurred. Please try again.');
                 } else {
+                    const notification: Notification = {
+                        message: 'Account created successfully. Please verify your email.',
+                        type: 'success'
+                    };
+                    setNotification(notification);
                     navigate(`/account/confirm?name=${formData.name}`);
                 }
             });
         } catch (err) {
-            if (err instanceof ZodError) {
-                setError(err.errors[0]?.message || 'An error occurred. Please try again.');
-            }
+            handleError(err, setError);
         }
     };
 

@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { CognitoUser } from 'amazon-cognito-identity-js';
 import { userPool } from '@/utils/userPool';
 import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 import { confirmCodeSchema } from '@/utils/schemas/authSchemas';
+import { handleError } from '@/utils/handleError';
+import type { Notification } from '@/types';
+import { NotificationContext } from '@/context/NotificationContext';
 
 const ConfirmPage = () => {
     useRedirectToAccount();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
+    const { setNotification } = useContext(NotificationContext);
 
     const [error, setError] = useState<string | null>(null);
     const [resendCodeMsg, setResendCodeMsg] = useState<string | null>(null);
@@ -35,10 +39,15 @@ const ConfirmPage = () => {
 
         cognitoUser.confirmRegistration(code, true, (err?: Error) => {
             if (err) {
-                setError(err.message || 'An error occurred. Please try again.');
+                handleError(err, setError);
             } else {
                 setError(null);
-                navigate('/account/signin', { state: { message: 'Account successfully verified. Please log in.' } });
+                const notification: Notification = {
+                    message: 'Account successfully verified. Please log in.',
+                    type: 'success'
+                };
+                setNotification(notification);
+                navigate('/account/signin');
             }
         });
     };
@@ -55,7 +64,7 @@ const ConfirmPage = () => {
 
         cognitoUser.resendConfirmationCode((err?: Error) => {
             if (err) {
-                setResendCodeMsg(err.message || 'An error occurred. Please try again.');
+                handleError(err, setResendCodeMsg);
             } else {
                 setResendCodeMsg('Code resent successfully.');
             }

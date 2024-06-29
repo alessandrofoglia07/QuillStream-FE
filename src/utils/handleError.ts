@@ -1,17 +1,24 @@
 import { ZodError } from "zod";
+import type { Notification } from "@/types";
 
-export const handleError = (err: unknown, setError: (error: string) => void = console.error, defaultMessage = 'An error occurred. Please try again.') => {
+export const handleError = (err: unknown, setError: (error: string) => void = console.error, defaultMessage = 'An error occurred. Please try again.'): { message: string; notification: Notification; } => {
     const output = (result: string) => {
         setError(result);
-        return result;
+        return {
+            message: result,
+            notification: Object.freeze({
+                message: result,
+                type: 'error'
+            })
+        };
     };
     if (err instanceof ZodError) {
-        output(err.errors[0]?.message || defaultMessage);
+        return output(err.errors[0]?.message || defaultMessage);
     } else if (err instanceof Error) {
-        output(err.message || defaultMessage);
+        return output(err.message || defaultMessage);
     } else if (typeof err === 'string') {
-        output(err || defaultMessage);
+        return output(err || defaultMessage);
     } else {
-        output(defaultMessage);
+        return output(defaultMessage);
     }
 };

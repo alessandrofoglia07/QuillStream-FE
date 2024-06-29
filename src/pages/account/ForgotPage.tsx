@@ -3,6 +3,7 @@ import { userPool } from '@/utils/userPool';
 import { CognitoUser } from 'amazon-cognito-identity-js';
 import { useNavigate } from 'react-router-dom';
 import useRedirectToAccount from '@/hooks/useRedirectToAccount';
+import { handleError } from '@/utils/handleError';
 
 const ForgotPage: React.FC = () => {
     useRedirectToAccount();
@@ -25,20 +26,14 @@ const ForgotPage: React.FC = () => {
 
             cognitoUser.forgotPassword({
                 onFailure: (err) => {
-                    setError(err.message || 'An error occurred. Please try again.');
+                    handleError(err, setError);
                 },
                 onSuccess: () => {
                     setResult('An email has been sent to reset your password.');
                 }
             });
         } catch (err) {
-            if (err instanceof Error) {
-                setError(err.message || 'An error occurred. Please try again.');
-            } else if (typeof err === 'string') {
-                setError(err);
-            } else {
-                setError('An error occurred. Please try again.');
-            }
+            handleError(err, setError);
         }
     };
 

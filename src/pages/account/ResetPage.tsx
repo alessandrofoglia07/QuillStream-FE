@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { userPool } from '@/utils/userPool';
 import { CognitoUser } from 'amazon-cognito-identity-js';
 import { useNavigate, useParams } from 'react-router-dom';
 import PasswordInput from '@/components/PasswordInput';
-import { ZodError } from 'zod';
 import { passwordSchema } from '@/utils/schemas/authSchemas';
 import useRedirectToAccount from '@/hooks/useRedirectToAccount';
+import { handleError } from '@/utils/handleError';
+import { NotificationContext } from '@/context/NotificationContext';
+import { Notification } from '@/types';
 
 const ResetPage: React.FC = () => {
     useRedirectToAccount();
     const { email, code } = useParams();
     const navigate = useNavigate();
+    const { setNotification } = useContext(NotificationContext);
 
     const [formData, setFormData] = useState({ newPassword: '', confirmPassword: '' });
     const [error, setError] = useState<string | null>(null);
@@ -31,22 +34,19 @@ const ResetPage: React.FC = () => {
 
             user.confirmPassword(code, formData.newPassword, {
                 onSuccess: () => {
-                    navigate('/account/signin', { state: { message: 'Password successfully changed. Please log in.' } });
+                    const notification: Notification = {
+                        message: 'Password successfully changed. Please log in.',
+                        type: 'success'
+                    };
+                    setNotification(notification);
+                    navigate('/account/signin');
                 },
                 onFailure: (err) => {
-                    setError(err.message || 'An error occurred. Please try again.');
+                    handleError(err, setError);
                 }
             });
         } catch (err) {
-            if (err instanceof ZodError) {
-                setError(err.errors[0]?.message || 'An error occurred. Please try again.');
-            } else if (err instanceof Error) {
-                setError(err.message || 'An error occurred. Please try again.');
-            } else if (typeof err === 'string') {
-                setError(err);
-            } else {
-                setError('An error occurred. Please try again.');
-            }
+            handleError(err, setError);
         }
     };
 
