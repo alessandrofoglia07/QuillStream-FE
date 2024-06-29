@@ -5,6 +5,7 @@ import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import { userPool } from '@/utils/userPool';
 import { useNavigate } from 'react-router-dom';
 import PasswordInput from '@/components/PasswordInput';
+import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 
 interface Form {
     name: string;
@@ -13,6 +14,7 @@ interface Form {
 }
 
 const CreateAnAccountPage: React.FC = () => {
+    useRedirectToAccount();
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState<Form>({
@@ -68,13 +70,13 @@ const CreateAnAccountPage: React.FC = () => {
                     <input type='email' name='email' placeholder='Email' value={formData.email} onChange={handleChange} />
                     <PasswordInput name='password' value={formData.password} onChange={handleChange} />
                 </form>
-                {error && <h6 className='min-h-4 py-6 text-center text-red-400'>{error}</h6>}
                 <button
                     disabled={Object.values(formData).some((field) => field.length === 0)}
                     className='mt-4 w-2/3 rounded-llg border border-gray-600/50 bg-light-grey/70 py-3 transition-colors duration-75 disabled:bg-light-grey disabled:text-white/60'
                     onClick={handleSubmit}>
                     Create an account
                 </button>
+                {error && <h6 className='mt-2 min-h-4 text-center text-red-400'>{error}</h6>}
                 <button onClick={redirectToSignIn} className='mt-2 rounded-llg bg-transparent px-8 py-2 text-white/60 transition-colors duration-75 hover:bg-light-grey'>
                     Sign In
                 </button>

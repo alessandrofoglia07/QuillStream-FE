@@ -6,9 +6,9 @@ import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 import { confirmCodeSchema } from '@/utils/schemas/authSchemas';
 
 const ConfirmPage = () => {
+    useRedirectToAccount();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    useRedirectToAccount();
 
     const [error, setError] = useState<string | null>(null);
     const [resendCodeMsg, setResendCodeMsg] = useState<string | null>(null);
@@ -89,7 +89,7 @@ const ConfirmPage = () => {
                         Resend code
                     </span>
                 </p>
-                {resendCodeMsg && <h6 className='min-h-4 py-6 text-center'>{resendCodeMsg}</h6>}
+                {resendCodeMsg && <h6 className='min-h-4 py-2 text-center'>{resendCodeMsg}</h6>}
                 <button
                     disabled={code.length === 0}
                     className='mt-4 w-2/3 rounded-llg border border-gray-600/50 bg-light-grey/70 px-16 py-3 transition-colors duration-75 disabled:bg-light-grey disabled:text-white/60'

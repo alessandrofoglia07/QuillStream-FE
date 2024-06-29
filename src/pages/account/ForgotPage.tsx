@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { userPool } from '@/utils/userPool';
 import { CognitoUser } from 'amazon-cognito-identity-js';
 import { useNavigate } from 'react-router-dom';
+import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 
 const ForgotPage: React.FC = () => {
+    useRedirectToAccount();
     const navigate = useNavigate();
 
     const [input, setInput] = useState('');

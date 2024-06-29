@@ -5,8 +5,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import PasswordInput from '@/components/PasswordInput';
 import { ZodError } from 'zod';
 import { passwordSchema } from '@/utils/schemas/authSchemas';
+import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 
 const ResetPage: React.FC = () => {
+    useRedirectToAccount();
     const { email, code } = useParams();
     const navigate = useNavigate();
 
