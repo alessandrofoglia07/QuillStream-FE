@@ -21,7 +21,11 @@ const PasswordInput: React.FC<Props> = (props: Props) => {
                     type='button'
                     onKeyDown={(e) => e.key === 'Enter' && setShowPass((prev) => !prev)}
                     className='aspect-square h-full rounded-full text-center outline-offset-4'>
-                    {showPass ? <HidePassIcon className='text-xl' onClick={() => setShowPass(false)} /> : <ShowPassIcon className='text-xl' onClick={() => setShowPass(true)} />}
+                    {showPass ? (
+                        <HidePassIcon className='text-xl text-white/60' onClick={() => setShowPass(false)} />
+                    ) : (
+                        <ShowPassIcon className='text-xl text-white/60' onClick={() => setShowPass(true)} />
+                    )}
                 </button>
             </div>
         </div>
