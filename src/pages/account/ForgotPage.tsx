@@ -41,7 +41,7 @@ const ForgotPage: React.FC = () => {
     };
 
     const handleCancel = () => {
-        navigate('/account/login');
+        navigate('/account/signin');
     };
 
     return (

@@ -38,7 +38,7 @@ const ConfirmPage = () => {
                 setError(err.message || 'An error occurred. Please try again.');
             } else {
                 setError(null);
-                navigate('/account/login', { state: { message: 'Account successfully verified. Please log in.' } });
+                navigate('/account/signin', { state: { message: 'Account successfully verified. Please log in.' } });
             }
         });
     };

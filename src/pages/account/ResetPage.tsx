@@ -29,7 +29,7 @@ const ResetPage: React.FC = () => {
 
             user.confirmPassword(code, formData.newPassword, {
                 onSuccess: () => {
-                    navigate('/account/login', { state: { message: 'Password successfully changed. Please log in.' } });
+                    navigate('/account/signin', { state: { message: 'Password successfully changed. Please log in.' } });
                 },
                 onFailure: (err) => {
                     setError(err.message || 'An error occurred. Please try again.');
