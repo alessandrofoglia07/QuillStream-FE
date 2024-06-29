@@ -2,6 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes notification-enter {
+    0% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes notification-exit {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(0.6);
+        opacity: 0;
+    }
+}
+
+@keyframes duration {
+    to {
+        transform: scaleX(0);
+    }
+}
+
 @layer base {
     body {
         background-color: #202020;
@@ -38,5 +66,18 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+    }
+
+    .notification-enter-animation {
+        animation: notification-enter 0.2s ease-out;
+    }
+
+    .notification-exit-animation {
+        animation: notification-exit 0.1s ease-out forwards;
+    }
+
+    .duration-animation {
+        animation: duration calc(var(--duration) * 1s) linear forwards;
+        transform-origin: left center;
     }
 }

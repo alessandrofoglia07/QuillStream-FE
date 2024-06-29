@@ -1,8 +1,11 @@
-import { createContext, type PropsWithChildren, useState } from 'react';
+import { createContext, type PropsWithChildren, useState, useRef, CSSProperties } from 'react';
 import type { Notification } from '@/types';
 import { FaCheckCircle as CheckIcon, FaTimesCircle as ErrorIcon, FaInfoCircle as InfoIcon, FaTimes as XIcon } from 'react-icons/fa';
 
-type TimeoutNotification = Pick<Notification, 'message' | 'type'> & { timeout: ReturnType<typeof setTimeout> | null };
+interface TimeoutNotification extends Notification {
+    duration: number;
+    timeout: ReturnType<typeof setTimeout> | null;
+}
 
 interface INotificationContext {
     setNotification: (notification: Notification) => void;
@@ -12,9 +15,25 @@ interface INotificationContext {
 const NotificationContext = createContext<INotificationContext>({} as INotificationContext);
 
 const Notification = ({ children }: PropsWithChildren) => {
-    const [notification, setNotificationState] = useState<TimeoutNotification | null>(null);
+    const notificationRef = useRef<HTMLDivElement | null>(null);
 
-    const clearNotification = () => setNotificationState(null);
+    const [notification, setNotificationState] = useState<TimeoutNotification | null>({
+        message: 'An error occurred. Please try again.',
+        type: 'error',
+        timeout: null,
+        duration: -1
+    });
+
+    const clearNotification = () => {
+        notificationRef.current?.classList.add('notification-exit-animation');
+
+        if (notification && notification.timeout) {
+            clearTimeout(notification.timeout);
+        }
+        setTimeout(() => {
+            setNotificationState(null);
+        }, 100);
+    };
 
     const setNotification = (newNotification: Notification) => {
         if (notification && notification.timeout) {
@@ -22,13 +41,14 @@ const Notification = ({ children }: PropsWithChildren) => {
             clearNotification();
         }
 
-        const timeout = setTimeout(() => {
-            clearNotification();
-        }, newNotification.duration || 5000);
+        const timeout =
+            newNotification.duration !== -1
+                ? setTimeout(() => {
+                      clearNotification();
+                  }, newNotification.duration || 10000)
+                : null;
 
-        delete newNotification.duration;
-
-        setNotificationState({ ...newNotification, timeout });
+        setNotificationState({ ...newNotification, timeout, duration: newNotification.duration ?? 10000 });
     };
 
     return (
@@ -37,7 +57,8 @@ const Notification = ({ children }: PropsWithChildren) => {
             {notification && (
                 <div
                     style={{ borderLeftColor: notification.type === 'success' ? '#22c55e' : notification.type === 'error' ? '#f43f5e' : '#0ea5e9' }}
-                    className='fixed bottom-12 right-0 grid h-24 w-96 grid-cols-[1.3fr_6fr_0.5fr] items-center gap-4 rounded-md border-l-[12px] bg-light-grey p-4 sm:right-6 md:right-12'>
+                    ref={notificationRef}
+                    className='notification-enter-animation fixed bottom-12 right-0 grid min-h-24 w-96 grid-cols-[1.3fr_6fr_0.5fr] items-center gap-4 rounded-md bg-light-grey p-4 shadow-md sm:right-6 md:right-12'>
                     <div className='self-center rounded-lg p-1'>
                         {notification.type === 'success' && <CheckIcon size={35} className='text-green-500' />}
                         {notification.type === 'error' && <ErrorIcon size={35} className='text-rose-500' />}
@@ -50,6 +71,14 @@ const Notification = ({ children }: PropsWithChildren) => {
                     <button className='self-start leading-[0] text-white/80' onClick={clearNotification}>
                         <XIcon />
                     </button>
+                    {notification.duration !== -1 ? (
+                        <div
+                            style={{ '--duration': (notification.duration - 200) / 1000 } as CSSProperties}
+                            className='duration-animation absolute h-1 w-full self-end rounded-l-full rounded-r-full bg-rose-500'
+                        />
+                    ) : (
+                        <div className='absolute h-1 w-full self-end rounded-l-full rounded-r-full bg-rose-500' />
+                    )}
                 </div>
             )}
         </NotificationContext.Provider>
