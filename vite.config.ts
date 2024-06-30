@@ -21,8 +21,8 @@ const manifest: Partial<ManifestOptions> = {
     ],
     start_url: '/',
     display: 'standalone',
-    theme_color: '#000000',
-    background_color: '#ffffff'
+    theme_color: '#0284c7',
+    background_color: '#202020'
 };
 
 // https://vitejs.dev/config/
@@ -31,7 +31,7 @@ export default defineConfig({
         react(),
         VitePWA({
             manifest,
-            includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'assets/*'],
+            includeAssets: ['favicon.png', 'apple-touch-icon.png', 'assets/*'],
             workbox: {
                 globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}']
             }
