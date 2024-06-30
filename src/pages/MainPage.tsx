@@ -1,10 +1,12 @@
-import Logo from '@/components/Logo';
 import React from 'react';
+import Navbar from '@/components/NavBarMainPage';
 
 const MainPage: React.FC = () => {
     return (
         <div>
-            <Logo color='#0284c7' />
+            <header>
+                <Navbar />
+            </header>
         </div>
     );
 };
