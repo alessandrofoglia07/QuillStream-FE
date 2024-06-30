@@ -34,7 +34,7 @@ const SignInPage: React.FC = () => {
         try {
             await authenticate(formData.nameOrEmail, formData.password);
             const notification: Notification = {
-                message: 'Successfully signed in. Welcome to QuillStream.',
+                message: 'Successfully signed in. \nWelcome to QuillStream.',
                 type: 'success'
             };
             setNotification(notification);
