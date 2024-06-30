@@ -39,8 +39,9 @@ const CreateAnAccountPage: React.FC = () => {
             setError(null);
 
             const email = new CognitoUserAttribute({ Name: 'email', Value: formData.email });
+            const appearance = new CognitoUserAttribute({ Name: 'custom:appearance', Value: '1' });
 
-            userPool.signUp(formData.name, formData.password, [email], [], (err) => {
+            userPool.signUp(formData.name, formData.password, [email, appearance], [], (err) => {
                 if (err) {
                     console.log(err);
                     setError(err.message || 'An error occurred. Please try again.');

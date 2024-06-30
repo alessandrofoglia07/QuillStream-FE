@@ -68,11 +68,19 @@ const Notification = ({ children }: PropsWithChildren) => {
                     </button>
                     {notification.duration !== -1 ? (
                         <div
-                            style={{ '--duration': (notification.duration - 200) / 1000 } as CSSProperties}
-                            className='duration-animation absolute h-1 w-full self-end rounded-l-full rounded-r-full bg-rose-500'
+                            style={
+                                {
+                                    '--duration': (notification.duration - 200) / 1000,
+                                    backgroundColor: notification.type === 'success' ? '#22c55e' : notification.type === 'error' ? '#f43f5e' : '#0ea5e9'
+                                } as CSSProperties
+                            }
+                            className='duration-animation absolute h-1 w-full self-end rounded-l-full rounded-r-full'
                         />
                     ) : (
-                        <div className='absolute h-1 w-full self-end rounded-l-full rounded-r-full bg-rose-500' />
+                        <div
+                            style={{ backgroundColor: notification.type === 'success' ? '#22c55e' : notification.type === 'error' ? '#f43f5e' : '#0ea5e9' }}
+                            className='absolute h-1 w-full self-end rounded-l-full rounded-r-full'
+                        />
                     )}
                 </div>
             )}
