@@ -3,6 +3,7 @@ import { AccountContext } from '@/context/AccountContext';
 import Logo from './Logo';
 import { FaMagnifyingGlass as SearchIcon } from 'react-icons/fa6';
 import { appearanceToIcon } from '@/utils/appearanceIconConverter';
+import Button from './CustomButton';
 
 const NavbarMainPage: React.FC = () => {
     const { getSession } = useContext(AccountContext);
@@ -20,8 +21,8 @@ const NavbarMainPage: React.FC = () => {
         <nav className='fixed left-0 top-0 z-50 m-4 mb-8 flex h-12 w-[calc(100svw-2rem)] items-center justify-between'>
             <div className='h-full pr-4 md:pr-8'>
                 <div className='flex items-center -md:hidden'>
-                    <Logo height='3rem' onlyLogo />
-                    <Logo height='1.5rem' width='150px' onlyText />
+                    <Logo height='3rem' onlyLogo color='#ffffff' />
+                    <Logo height='1.5rem' width='150px' onlyText color='#ffffff' />
                 </div>
                 <div className='md:hidden'>
                     <Logo height='2.5rem' width='2.5rem' onlyLogo />
@@ -36,9 +37,9 @@ const NavbarMainPage: React.FC = () => {
                 </div>
             </div>
             <div className='flex h-full w-10 items-center justify-end md:w-[calc(3rem+150px)]'>
-                <a href='/account' className='rounded-llg bg-transparent p-3 transition-all hover:bg-slate-600/20'>
-                    {appearanceToIcon(appearance, 'text-2xl text-[#0284c7]')}
-                </a>
+                <Button data-secondary className='!hover:bg-slate-600/20 !p-3'>
+                    {appearanceToIcon(appearance, 'text-2xl text-[#ffffff]')}
+                </Button>
             </div>
         </nav>
     );

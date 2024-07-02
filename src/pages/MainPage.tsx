@@ -94,6 +94,9 @@ const MainPage: React.FC = () => {
             <main>
                 <div className='mx-auto h-full w-full max-w-[30rem] py-4 md:max-w-[40rem] lg:max-w-[60rem]'>
                     <div className='flex h-14 w-full items-center gap-4'>
+                        <Button className='aspect-square !p-2'>
+                            <PlusIcon size={20} />
+                        </Button>
                         <DropdownMenu
                             buttonText={
                                 <>
@@ -114,9 +117,6 @@ const MainPage: React.FC = () => {
                             selectedOption={ownedDocumentsOption}
                             setSelectedOption={setOwnedDocumentsOption as (option: string) => void}
                         />
-                        <Button className='ml-auto aspect-square !p-2'>
-                            <PlusIcon size={20} />
-                        </Button>
                     </div>
                     {documents ? (
                         <></>
