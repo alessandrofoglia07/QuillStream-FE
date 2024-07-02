@@ -10,3 +10,29 @@ export interface Notification {
      */
     duration?: number;
 }
+
+export interface Document {
+    documentId: string;
+    authorId: string;
+    authorName: string;
+    title: string;
+    content: string;
+    editors: string[];
+    createdAt: string;
+    updatedAt: string;
+
+    // UserDocument fields
+    user: {
+        userId: string;
+        role: 'author' | 'editor';
+        lastAccessedAt: string;
+    };
+}
+
+export interface WebSocketConnection {
+    connectionId: string; // partition key
+    documentId: string; // sort key
+    userId: string;
+}
+
+export type MainPageSortOption = 'Last accessed by me' | 'Title' | 'Last modified';
