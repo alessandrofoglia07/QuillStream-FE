@@ -8,8 +8,7 @@ interface Props {
     height?: number | string;
 }
 
-// Default color is #0284c7
-const Logo: React.FC<Props> = ({ color = '#0284c7', onlyLogo, onlyText, width, height }) => {
+const Logo: React.FC<Props> = ({ color = '#ffffff', onlyLogo, onlyText, width, height }) => {
     if (onlyLogo) {
         return (
             <svg width={width ?? 73} height={height ?? 73} viewBox='0 0 125 121.63186443750331'>
