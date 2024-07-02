@@ -7,7 +7,7 @@ const config = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', ...defaultTheme.fontFamily.sans]
+                sans: ['Noto Sans', 'Inter', '-apple-system', 'BlinkMacSystemFont', ...defaultTheme.fontFamily.sans]
             },
             screens: {
                 '-md': { max: '767px' },
