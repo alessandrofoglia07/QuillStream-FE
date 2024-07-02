@@ -4,6 +4,7 @@ import { CognitoUser } from 'amazon-cognito-identity-js';
 import { useNavigate } from 'react-router-dom';
 import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 import { handleError } from '@/utils/handleError';
+import Button from '@/components/CustomButton';
 
 const ForgotPage: React.FC = () => {
     useRedirectToAccount();
@@ -48,7 +49,7 @@ const ForgotPage: React.FC = () => {
                 <h2 className='w-full pt-2 tracking-wide opacity-90'>Please enter your name or email to search for your account.</h2>
                 <form
                     onSubmit={handleSubmit}
-                    className='flex w-full flex-col space-y-4 pb-2 pt-8 *:rounded-llg *:border *:border-gray-600/50 *:bg-light-grey *:px-6 *:py-3 *:focus-within:outline-none'
+                    className='flex w-full flex-col space-y-4 pb-2 pt-8 *:rounded-llg *:border *:border-white/5 *:bg-light-grey *:px-6 *:py-3 *:focus-within:outline-none'
                     autoComplete='off'
                     spellCheck={false}>
                     <input type='text' placeholder='Name or Email' value={input} onChange={handleChange} />
@@ -56,15 +57,12 @@ const ForgotPage: React.FC = () => {
                 {error && <h6 className='min-h-6 text-center text-red-400'>{error}</h6>}
                 {result && <h6 className='min-h-6 text-center'>{result}</h6>}
                 <div className='flex w-full items-center justify-center gap-2 pt-4'>
-                    <button className='w-1/3 rounded-llg border border-gray-600/50 bg-light-grey/70 py-3' onClick={handleCancel}>
+                    <Button className='w-1/3 !py-3' onClick={handleCancel}>
                         Cancel
-                    </button>
-                    <button
-                        disabled={input === ''}
-                        className='w-1/2 rounded-llg border border-gray-600/50 bg-light-grey/70 py-3 transition-colors duration-75 disabled:bg-light-grey disabled:text-white/60'
-                        onClick={handleSubmit}>
+                    </Button>
+                    <Button disabled={input === ''} className='w-1/2 !py-3 disabled:text-white/60' onClick={handleSubmit}>
                         Search
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

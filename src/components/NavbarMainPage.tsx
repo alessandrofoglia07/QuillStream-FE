@@ -17,20 +17,25 @@ const NavbarMainPage: React.FC = () => {
     }, []);
 
     return (
-        <nav className='fixed left-0 top-0 z-50 m-4 flex h-12 w-[calc(100svw-2rem)] items-center justify-between'>
-            <div className='flex h-full items-center pr-8'>
-                <Logo height='3rem' onlyLogo />
-                <Logo height='1.5rem' width='150px' onlyText />
+        <nav className='fixed left-0 top-0 z-50 m-4 mb-8 flex h-12 w-[calc(100svw-2rem)] items-center justify-between'>
+            <div className='h-full pr-4 md:pr-8'>
+                <div className='flex items-center -md:hidden'>
+                    <Logo height='3rem' onlyLogo />
+                    <Logo height='1.5rem' width='150px' onlyText />
+                </div>
+                <div className='md:hidden'>
+                    <Logo height='2.5rem' width='2.5rem' onlyLogo />
+                </div>
             </div>
-            <div className='flex h-full items-center pr-8'>
-                <div className='flex w-[40vw] items-center rounded-llg bg-light-grey py-3 pl-6 pr-12 shadow-sm outline-2 outline-white/20 transition-all focus-within:shadow-md'>
+            <div className='flex h-full items-center md:pr-8 -md:w-3/4'>
+                <div className='flex w-full items-center rounded-llg border border-white/5 bg-light-grey py-3 pl-3 pr-1 shadow-sm transition-all focus-within:shadow-md md:w-[40vw] md:pl-6 md:pr-12'>
                     <div className='grid h-full w-1/6 max-w-12 place-items-start px-1'>
                         <SearchIcon className='text-xl text-white/40' />
                     </div>
-                    <input type='text' placeholder='Search' className='w-full bg-light-grey text-white/90 focus-visible:outline-none' />
+                    <input type='text' placeholder='Search' className='ml-2 w-full bg-light-grey text-white/90 focus-visible:outline-none' />
                 </div>
             </div>
-            <div className='flex h-full w-48 items-center justify-end pr-8'>
+            <div className='flex h-full w-10 items-center justify-end md:w-[calc(3rem+150px)]'>
                 <a href='/account' className='rounded-llg bg-transparent p-3 transition-all hover:bg-slate-600/20'>
                     {appearanceToIcon(appearance, 'text-2xl text-[#0284c7]')}
                 </a>

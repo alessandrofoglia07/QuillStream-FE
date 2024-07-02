@@ -7,6 +7,7 @@ import { confirmCodeSchema } from '@/utils/schemas/authSchemas';
 import { handleError } from '@/utils/handleError';
 import type { Notification } from '@/types';
 import { NotificationContext } from '@/context/NotificationContext';
+import Button from '@/components/CustomButton';
 
 const ConfirmPage = () => {
     useRedirectToAccount();
@@ -85,7 +86,7 @@ const ConfirmPage = () => {
                         type='number'
                         name='code'
                         placeholder='Confirmation code'
-                        className='rounded-llg border border-gray-600/50 bg-light-grey px-6 py-3 focus-within:outline-none'
+                        className='rounded-llg border border-white/5 bg-light-grey px-6 py-3 focus-within:outline-none'
                         value={code}
                         autoFocus
                         onChange={handleChange}
@@ -99,12 +100,9 @@ const ConfirmPage = () => {
                     </span>
                 </p>
                 {resendCodeMsg && <h6 className='min-h-4 py-2 text-center'>{resendCodeMsg}</h6>}
-                <button
-                    disabled={code.length === 0}
-                    className='mt-4 w-2/3 rounded-llg border border-gray-600/50 bg-light-grey/70 px-16 py-3 transition-colors duration-75 disabled:bg-light-grey disabled:text-white/60'
-                    onClick={handleSubmit}>
+                <Button disabled={code.length === 0} className='mt-4 w-2/3 !py-3 disabled:text-white/60' onClick={handleSubmit}>
                     Submit
-                </button>
+                </Button>
             </div>
         </div>
     );

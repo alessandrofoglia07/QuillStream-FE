@@ -1,3 +1,4 @@
+import Button from '@/components/CustomButton';
 import PasswordInput from '@/components/PasswordInput';
 import { AccountContext } from '@/context/AccountContext';
 import { NotificationContext } from '@/context/NotificationContext';
@@ -59,25 +60,22 @@ const SignInPage: React.FC = () => {
                 <h2 className='w-full pt-2 tracking-wide opacity-90'>Welcome back to QuillStream.</h2>
                 <form
                     onSubmit={handleSubmit}
-                    className='flex w-full flex-col space-y-4 pt-12 *:rounded-llg *:border *:border-gray-600/50 *:bg-light-grey *:px-6 *:py-3 *:focus-within:outline-none'
+                    className='flex w-full flex-col space-y-4 pt-12 *:rounded-llg *:border *:border-white/5 *:bg-light-grey *:px-6 *:py-3 *:focus-within:outline-none'
                     autoComplete='off'
                     spellCheck={false}>
                     <input type='text' autoFocus name='nameOrEmail' placeholder='Name or Email' value={formData.nameOrEmail} onChange={handleChange} />
                     <PasswordInput name='password' value={formData.password} onChange={handleChange} />
                 </form>
-                <button onClick={handleForgotPassword} className='mb-2 mt-4 rounded-llg bg-transparent px-4 py-2 text-white/60 transition-colors duration-75 hover:bg-light-grey'>
+                <Button data-secondary onClick={handleForgotPassword} className='mb-2 mt-4'>
                     Forgot Password
-                </button>
-                <button
-                    disabled={Object.values(formData).some((field) => field.length === 0)}
-                    className='w-2/3 rounded-llg border border-gray-600/50 bg-light-grey/70 px-16 py-3 transition-colors duration-75 disabled:bg-light-grey disabled:text-white/60'
-                    onClick={handleSubmit}>
+                </Button>
+                <Button disabled={Object.values(formData).some((field) => field.length === 0)} className='w-2/3 py-3 disabled:text-white/60' onClick={handleSubmit}>
                     Sign In
-                </button>
+                </Button>
                 {error && <h6 className='mt-2 min-h-4 text-center text-red-400'>{error}</h6>}
-                <button onClick={redirectToCreateAnAccount} className='mt-2 rounded-llg bg-transparent px-4 py-2 text-white/60 transition-colors duration-75 hover:bg-light-grey'>
+                <Button data-secondary onClick={redirectToCreateAnAccount}>
                     Create an Account
-                </button>
+                </Button>
             </div>
         </div>
     );

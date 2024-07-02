@@ -8,6 +8,7 @@ import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 import { NotificationContext } from '@/context/NotificationContext';
 import type { Notification } from '@/types';
 import { handleError } from '@/utils/handleError';
+import Button from '@/components/CustomButton';
 
 interface Form {
     name: string;
@@ -70,23 +71,20 @@ const CreateAnAccountPage: React.FC = () => {
                 <h2 className='w-full pt-2 tracking-wide opacity-90'>QuillStream accounts are private and secure.</h2>
                 <form
                     onSubmit={handleSubmit}
-                    className='flex w-full flex-col space-y-4 pb-2 pt-12 *:rounded-llg *:border *:border-gray-600/50 *:bg-light-grey *:px-6 *:py-3 *:focus-within:outline-none'
+                    className='flex w-full flex-col space-y-4 pb-2 pt-12 *:rounded-llg *:border *:border-white/5 *:bg-light-grey *:px-6 *:py-3 *:focus-within:outline-none'
                     autoComplete='off'
                     spellCheck={false}>
                     <input type='text' name='name' autoFocus placeholder='Name' value={formData.name} onChange={handleChange} />
                     <input type='email' name='email' placeholder='Email' value={formData.email} onChange={handleChange} />
                     <PasswordInput name='password' value={formData.password} onChange={handleChange} />
                 </form>
-                <button
-                    disabled={Object.values(formData).some((field) => field.length === 0)}
-                    className='mt-4 w-2/3 rounded-llg border border-gray-600/50 bg-light-grey/70 py-3 transition-colors duration-75 disabled:bg-light-grey disabled:text-white/60'
-                    onClick={handleSubmit}>
+                <Button className='mt-4 w-2/3 !py-3 disabled:text-white/60' disabled={Object.values(formData).some((field) => field.length === 0)} onClick={handleSubmit}>
                     Create an account
-                </button>
+                </Button>
                 {error && <h6 className='mt-2 min-h-4 text-center text-red-400'>{error}</h6>}
-                <button onClick={redirectToSignIn} className='mt-2 rounded-llg bg-transparent px-8 py-2 text-white/60 transition-colors duration-75 hover:bg-light-grey'>
+                <Button onClick={redirectToSignIn} data-secondary>
                     Sign In
-                </button>
+                </Button>
             </div>
         </div>
     );

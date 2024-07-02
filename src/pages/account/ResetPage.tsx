@@ -8,6 +8,7 @@ import useRedirectToAccount from '@/hooks/useRedirectToAccount';
 import { handleError } from '@/utils/handleError';
 import { NotificationContext } from '@/context/NotificationContext';
 import { Notification } from '@/types';
+import Button from '@/components/CustomButton';
 
 const ResetPage: React.FC = () => {
     useRedirectToAccount();
@@ -57,19 +58,19 @@ const ResetPage: React.FC = () => {
                 <h2 className='w-full pt-2 tracking-wide opacity-90'>Please enter a new password for your account.</h2>
                 <form
                     onSubmit={handleSubmit}
-                    className='flex w-full flex-col space-y-4 pb-2 pt-8 *:rounded-llg *:border *:border-gray-600/50 *:bg-light-grey *:px-6 *:py-3 *:focus-within:outline-none'
+                    className='flex w-full flex-col space-y-4 pb-2 pt-8 *:rounded-llg *:border *:border-white/5 *:bg-light-grey *:px-6 *:py-3 *:focus-within:outline-none'
                     autoComplete='off'
                     spellCheck={false}>
                     <PasswordInput name='newPassword' placeholder='New Password' value={formData.newPassword} onChange={handleChange} />
                     <PasswordInput name='confirmPassword' placeholder='Confirm New Password' value={formData.confirmPassword} onChange={handleChange} />
                 </form>
                 {error && <h6 className='min-h-6 text-center text-red-400'>{error}</h6>}
-                <button
+                <Button
                     disabled={!formData.newPassword || !formData.confirmPassword || formData.newPassword !== formData.confirmPassword}
-                    className='mt-4 w-2/3 rounded-llg border border-gray-600/50 bg-light-grey/70 px-16 py-3 transition-colors duration-75 disabled:bg-light-grey disabled:text-white/60'
+                    className='mt-4 w-2/3 !py-3 disabled:text-white/60'
                     onClick={handleSubmit}>
                     Submit
-                </button>
+                </Button>
             </div>
         </div>
     );
