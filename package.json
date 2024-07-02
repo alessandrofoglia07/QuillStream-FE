@@ -19,8 +19,9 @@
         "docker-run:prod": "docker run -it --rm -p 8080:80 --name create-modern-react-pwa -d create-modern-react-pwa-prod"
     },
     "dependencies": {
-        "@headlessui/react": "^1.7.18",
+        "@headlessui/react": "^2.1.1",
         "amazon-cognito-identity-js": "^6.3.12",
+        "axios": "^1.7.2",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-icons": "^5.2.1",
