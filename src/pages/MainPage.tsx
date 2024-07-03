@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Navbar from '@/components/NavbarMainPage';
-// import DocumentPreview from '@/components/DocumentPreview';
+import DocumentPreview from '@/components/DocumentPreview';
 import { Document, MainPageSortOption as SortOption } from '@/types';
 import { handleError } from '@/utils/handleError';
 import { NotificationContext } from '@/context/NotificationContext';
@@ -119,7 +119,21 @@ const MainPage: React.FC = () => {
                         />
                     </div>
                     {documents ? (
-                        <></>
+                        <>
+                            {Object.entries(sortDocuments(filterDocuments(documents))).map(
+                                ([category, docs]) =>
+                                    docs.length > 0 && (
+                                        <div key={category}>
+                                            <h2 className='mb-4 mt-8 pl-3 text-lg font-semibold'>{category}</h2>
+                                            <div className='grid grid-cols-1 gap-4'>
+                                                {docs.map((doc: Document) => (
+                                                    <DocumentPreview key={doc.documentId} document={doc} sortOption={sortOption} />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )
+                            )}
+                        </>
                     ) : (
                         <div className='mt-16 text-center'>
                             <h2 className='mb-4 text-xl font-semibold'>No documents found</h2>

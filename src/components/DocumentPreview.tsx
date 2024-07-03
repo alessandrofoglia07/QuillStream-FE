@@ -34,13 +34,13 @@ const DocumentPreview: React.FC<Props> = ({ document, sortOption }) => {
             <div className='grid w-[10%] place-items-center'>
                 <div className='aspect-square w-5 rounded bg-white/70' />
             </div>
-            <div className='line-clamp-1 w-1/2'>
+            <div className='line-clamp-1 flex w-1/2 items-center'>
                 <h3>{document.title}</h3>
             </div>
-            <div className='line-clamp-1 w-[15%] px-2 text-white/70'>
+            <div className='line-clamp-1 flex w-[15%] items-center px-2 text-white/70'>
                 <p>{document.authorName}</p>
             </div>
-            <div className='line-clamp-1 w-[15%] pl-2 text-white/70'>
+            <div className='line-clamp-1 flex w-[15%] items-center pl-2 text-white/70'>
                 <p>{formatDate(sortOption === 'Last accessed by me' ? document.user.lastAccessedAt : document.updatedAt)}</p>
             </div>
             <div className='grid w-[10%] place-items-center rounded'>
