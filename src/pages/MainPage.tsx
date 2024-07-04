@@ -10,12 +10,14 @@ import Button from '@/components/CustomButton';
 import { FaSortAlphaDown as SortIcon } from 'react-icons/fa';
 import { PiHandArrowDownBold as OwnIcon } from 'react-icons/pi';
 import { FaPlus as PlusIcon } from 'react-icons/fa6';
+import Spinner from '@/components/Spinner';
 
 type OwnedDocumentsOptions = 'Owned by anyone' | 'Owned by me' | 'Shared';
 
 const MainPage: React.FC = () => {
     const { setNotification } = useContext(NotificationContext);
 
+    const [loading, setLoading] = useState(true);
     const [documents, setDocuments] = useState<Document[] | null>(null);
     const [sortOption, setSortOption] = useState<SortOption>('Last accessed by me');
     const [ownedDocumentsOption, setOwnedDocumentsOption] = useState<OwnedDocumentsOptions>('Owned by anyone');
@@ -24,10 +26,12 @@ const MainPage: React.FC = () => {
         const fetchDocs = async () => {
             try {
                 const res = await axios.get('/documents/user');
-                setDocuments(res.data.documents);
+                setDocuments(res.data);
             } catch (err) {
                 const result = handleError(err);
                 setNotification(result.notification);
+            } finally {
+                setLoading(false);
             }
         };
         fetchDocs();
@@ -118,7 +122,9 @@ const MainPage: React.FC = () => {
                             setSelectedOption={setOwnedDocumentsOption as (option: string) => void}
                         />
                     </div>
-                    {documents ? (
+                    {loading ? (
+                        <Spinner className='mx-auto mt-[20%]' />
+                    ) : documents && documents.length > 0 ? (
                         <>
                             {Object.entries(sortDocuments(filterDocuments(documents))).map(
                                 ([category, docs]) =>
@@ -135,7 +141,7 @@ const MainPage: React.FC = () => {
                             )}
                         </>
                     ) : (
-                        <div className='mt-16 text-center'>
+                        <div className='mt-[20%] text-center'>
                             <h2 className='mb-4 text-xl font-semibold'>No documents found</h2>
                             <Button>Create a new document</Button>
                         </div>
