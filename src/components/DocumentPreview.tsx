@@ -9,6 +9,7 @@ interface Props {
 
 const DocumentPreview: React.FC<Props> = ({ document, sortOption }) => {
     const formatDate = (dateStr: string) => {
+        if (parseInt(dateStr) === -1) return 'Never';
         const date = new Date(parseInt(dateStr));
         if (date.getFullYear() !== new Date().getFullYear()) {
             return date.toLocaleDateString([], {

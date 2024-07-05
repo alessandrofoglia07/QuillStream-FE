@@ -6,11 +6,14 @@ import SignInPage from '@/pages/account/SignInPage';
 import ConfirmPage from '@/pages/account/ConfirmPage';
 import ForgotPage from '@/pages/account/ForgotPage';
 import ResetPage from '@/pages/account/ResetPage';
+import DocumentPage from '@/pages/DocumentPage';
 
 const App: React.FC = () => {
     return (
         <Routes>
             <Route path='/' element={<HomePage />} />
+
+            <Route path='/documents/:documentId' element={<DocumentPage />} />
 
             <Route path='/account/create-an-account' element={<CreateAnAccountPage />} />
             <Route path='/account/confirm' element={<ConfirmPage />} />

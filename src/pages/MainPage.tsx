@@ -11,10 +11,13 @@ import { FaSortAlphaDown as SortIcon } from 'react-icons/fa';
 import { PiHandArrowDownBold as OwnIcon } from 'react-icons/pi';
 import { FaPlus as PlusIcon } from 'react-icons/fa6';
 import Spinner from '@/components/Spinner';
+import { useNavigate } from 'react-router-dom';
 
 type OwnedDocumentsOptions = 'Owned by anyone' | 'Owned by me' | 'Shared';
 
 const MainPage: React.FC = () => {
+    const navigate = useNavigate();
+
     const { setNotification } = useContext(NotificationContext);
 
     const [loading, setLoading] = useState(true);
@@ -37,17 +40,40 @@ const MainPage: React.FC = () => {
         fetchDocs();
     }, []);
 
+    const handleNewDocument = async () => {
+        try {
+            const res = await axios.post('/documents/new');
+            if (res.status === 201) {
+                setNotification({ message: 'New document created successfully', type: 'success' });
+                navigate(`/documents/${res.data.documentId}`);
+            } else {
+                setNotification({ message: 'Failed to create a new document', type: 'error' });
+            }
+        } catch (err) {
+            const result = handleError(err);
+            setNotification(result.notification);
+        }
+    };
+
     const sortDocuments = (docs: Document[]) => {
         switch (sortOption) {
             case 'Last accessed by me': {
                 const organizedDocs = {
+                    New: [] as Document[],
                     Today: [] as Document[],
                     'Last 7 days': [] as Document[],
                     'Last 30 days': [] as Document[],
                     Older: [] as Document[]
                 };
 
+                docs = docs.sort((a, b) => parseInt(b.user.lastAccessedAt) - parseInt(a.user.lastAccessedAt));
+
                 for (const doc of docs) {
+                    if (doc.user.lastAccessedAt === '-1') {
+                        organizedDocs['New']?.push(doc);
+                        continue;
+                    }
+
                     const date = new Date(parseInt(doc.user.lastAccessedAt));
                     const today = new Date();
 
@@ -98,7 +124,7 @@ const MainPage: React.FC = () => {
             <main>
                 <div className='mx-auto h-full w-full max-w-[30rem] py-4 md:max-w-[40rem] lg:max-w-[60rem]'>
                     <div className='flex h-14 w-full items-center gap-4'>
-                        <Button className='aspect-square !p-2'>
+                        <Button className='aspect-square !p-2' onClick={handleNewDocument}>
                             <PlusIcon size={20} />
                         </Button>
                         <DropdownMenu
@@ -143,12 +169,12 @@ const MainPage: React.FC = () => {
                     ) : (
                         <div className='mt-[20%] text-center'>
                             <h2 className='mb-4 text-xl font-semibold'>No documents found</h2>
-                            <Button>Create a new document</Button>
+                            <Button onClick={handleNewDocument}>Create a new document</Button>
                         </div>
                     )}
                 </div>
             </main>
-            <Button className='fixed bottom-12 right-12 aspect-square !rounded-llg'>
+            <Button onClick={handleNewDocument} className='fixed bottom-12 right-12 aspect-square !rounded-llg'>
                 <PlusIcon size={28} />
             </Button>
         </div>
