@@ -57,7 +57,9 @@ axios.interceptors.response.use(response => response, async (err) => {
         });
     }
 
-    userPool.getCurrentUser()?.signOut();
+    if (err.response?.status === 401) {
+        userPool.getCurrentUser()?.signOut();
+    }
     return Promise.reject(err);
 });
 
