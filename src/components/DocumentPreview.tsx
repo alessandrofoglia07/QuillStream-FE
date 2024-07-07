@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import type { Document, MainPageSortOption as SortOption } from '@/types';
 import { BsThreeDotsVertical as OptionsIcon } from 'react-icons/bs';
 import { Dialog, DialogPanel, DialogTitle, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
@@ -6,6 +6,9 @@ import { FaRegEdit as RenameIcon, FaRegTrashAlt as DeleteIcon } from 'react-icon
 import { FaArrowUpRightFromSquare as OpenIcon } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import Button from './CustomButton';
+import { handleError } from '@/utils/handleError';
+import { NotificationContext } from '@/context/NotificationContext';
+import axios from '@/api/axios';
 
 interface Props {
     document: Document;
@@ -14,6 +17,8 @@ interface Props {
 
 const DocumentPreview: React.FC<Props> = ({ document, sortOption }) => {
     const navigate = useNavigate();
+
+    const { setNotification } = useContext(NotificationContext);
 
     const [renameModalOpen, setRenameModalOpen] = useState<boolean>(false);
     const [renameNewTitle, setRenameNewTitle] = useState<string>('');
@@ -49,7 +54,23 @@ const DocumentPreview: React.FC<Props> = ({ document, sortOption }) => {
 
     const handleRename = async () => {};
 
-    const handleDelete = async () => {};
+    const handleDelete = async () => {
+        try {
+            if (document.user.role !== 'author') {
+                throw new Error('You are not authorized to delete this document.');
+            }
+            await axios.delete(`/documents/${document.documentId}`);
+            setDeleteModalOpen(false);
+            setNotification({
+                type: 'success',
+                message: 'Document deleted successfully.'
+            });
+        } catch (err) {
+            console.error(err);
+            const result = handleError(err);
+            setNotification(result.notification);
+        }
+    };
 
     const handleOpenInNewTab = () => {
         window.open(`/documents/${document.documentId}`, '_blank');
