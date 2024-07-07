@@ -4,6 +4,7 @@ import { BsThreeDotsVertical as OptionsIcon } from 'react-icons/bs';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { FaRegEdit as RenameIcon, FaRegTrashAlt as DeleteIcon } from 'react-icons/fa';
 import { FaArrowUpRightFromSquare as OpenIcon } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
     document: Document;
@@ -11,6 +12,8 @@ interface Props {
 }
 
 const DocumentPreview: React.FC<Props> = ({ document, sortOption }) => {
+    const navigate = useNavigate();
+
     const formatDate = (dateStr: string) => {
         if (parseInt(dateStr) === -1) return 'Never';
         const date = new Date(parseInt(dateStr));
@@ -33,14 +36,21 @@ const DocumentPreview: React.FC<Props> = ({ document, sortOption }) => {
         }
     };
 
+    const handleOpen = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (e.ctrlKey) return window.open(`/documents/${document.documentId}`, '_blank');
+        navigate(`/documents/${document.documentId}`);
+    };
+
     const handleRename = async () => {};
 
     const handleDelete = async () => {};
 
-    const handleOpenInNewTab = () => {};
+    const handleOpenInNewTab = () => {
+        window.open(`/documents/${document.documentId}`, '_blank');
+    };
 
     return (
-        <div role='button' tabIndex={0} className='flex min-h-12 w-full items-center rounded-lg text-left transition-colors duration-75 *:h-full hover:bg-white/10'>
+        <div role='button' tabIndex={0} className='flex min-h-12 w-full items-center rounded-lg text-left transition-colors duration-75 *:h-full hover:bg-white/10' onClick={handleOpen}>
             <div className='grid w-[10%] place-items-center'>
                 <div className='aspect-square w-5 rounded bg-white/70' />
             </div>
@@ -54,29 +64,28 @@ const DocumentPreview: React.FC<Props> = ({ document, sortOption }) => {
                 <p>{formatDate(sortOption === 'Last accessed by me' ? document.user.lastAccessedAt : document.updatedAt)}</p>
             </div>
             <Menu>
-                <MenuButton>
-                    <div className='grid w-[10%] place-items-center rounded'>
-                        <button className='rounded-lg p-[.35rem] hover:bg-white/20'>
-                            <OptionsIcon size={20} />
-                        </button>
+                <MenuButton className='grid w-[10%] place-items-center rounded' onClick={(e) => e.stopPropagation()}>
+                    <div className='rounded-lg p-[.35rem] hover:bg-white/20'>
+                        <OptionsIcon size={20} />
                     </div>
                 </MenuButton>
                 <MenuItems
                     transition
+                    onClick={(e) => e.stopPropagation()}
                     anchor='bottom start'
                     className='origin-top-right rounded-xl border border-white/5 bg-light-grey p-2 text-sm/6 text-white transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0'>
                     <MenuItem>
-                        <button onClick={() => {}} className='group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-[focus]:bg-white/10'>
+                        <button onClick={handleRename} className='group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-[focus]:bg-white/10'>
                             <RenameIcon size={20} /> Rename
                         </button>
                     </MenuItem>
                     <MenuItem>
-                        <button onClick={() => {}} className='group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-[focus]:bg-white/10'>
+                        <button onClick={handleDelete} className='group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-[focus]:bg-white/10'>
                             <DeleteIcon className='-ml-0.5' size={20} /> <span className='ml-0.5'>Delete</span>
                         </button>
                     </MenuItem>
                     <MenuItem>
-                        <button onClick={() => {}} className='group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-[focus]:bg-white/10'>
+                        <button onClick={handleOpenInNewTab} className='group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-[focus]:bg-white/10'>
                             <OpenIcon size={18} className='mr-0.5' /> Open in new tab
                         </button>
                     </MenuItem>
