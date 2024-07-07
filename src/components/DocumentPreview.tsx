@@ -13,9 +13,10 @@ import axios from '@/api/axios';
 interface Props {
     document: Document;
     sortOption: SortOption;
+    reloadDocuments: () => void;
 }
 
-const DocumentPreview: React.FC<Props> = ({ document, sortOption }) => {
+const DocumentPreview: React.FC<Props> = ({ document, sortOption, reloadDocuments }) => {
     const navigate = useNavigate();
 
     const { setNotification } = useContext(NotificationContext);
@@ -52,7 +53,32 @@ const DocumentPreview: React.FC<Props> = ({ document, sortOption }) => {
         navigate(`/documents/${document.documentId}`);
     };
 
-    const handleRename = async () => {};
+    const handleRename = async () => {
+        try {
+            if (document.user.role !== 'author') {
+                throw new Error('You are not authorized to rename this document.');
+            }
+            if (renameNewTitle.length === 0) {
+                throw new Error('Title cannot be empty.');
+            }
+            if (renameNewTitle === document.title) {
+                throw new Error('New title cannot be the same as the old one.');
+            }
+            if (renameNewTitle.length > 100) {
+                throw new Error('Title cannot be longer than 100 characters.');
+            }
+            await axios.patch(`/documents/${document.documentId}`, { title: renameNewTitle });
+            setRenameModalOpen(false);
+            setNotification({
+                type: 'success',
+                message: 'Document renamed successfully.'
+            });
+            reloadDocuments();
+        } catch (err) {
+            const result = handleError(err);
+            setNotification(result.notification);
+        }
+    };
 
     const handleDelete = async () => {
         try {
@@ -65,8 +91,8 @@ const DocumentPreview: React.FC<Props> = ({ document, sortOption }) => {
                 type: 'success',
                 message: 'Document deleted successfully.'
             });
+            reloadDocuments();
         } catch (err) {
-            console.error(err);
             const result = handleError(err);
             setNotification(result.notification);
         }

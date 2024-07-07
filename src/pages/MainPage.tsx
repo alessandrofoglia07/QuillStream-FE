@@ -25,18 +25,19 @@ const MainPage: React.FC = () => {
     const [sortOption, setSortOption] = useState<SortOption>('Last accessed by me');
     const [ownedDocumentsOption, setOwnedDocumentsOption] = useState<OwnedDocumentsOptions>('Owned by anyone');
 
+    const fetchDocs = async () => {
+        try {
+            const res = await axios.get('/documents/user');
+            setDocuments(res.data);
+        } catch (err) {
+            const result = handleError(err);
+            setNotification(result.notification);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchDocs = async () => {
-            try {
-                const res = await axios.get('/documents/user');
-                setDocuments(res.data);
-            } catch (err) {
-                const result = handleError(err);
-                setNotification(result.notification);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchDocs();
     }, []);
 
@@ -159,7 +160,7 @@ const MainPage: React.FC = () => {
                                             <h2 className='mb-4 mt-8 pl-3 text-lg font-semibold'>{category}</h2>
                                             <div className='grid grid-cols-1 gap-4'>
                                                 {docs.map((doc: Document) => (
-                                                    <DocumentPreview key={doc.documentId} document={doc} sortOption={sortOption} />
+                                                    <DocumentPreview key={doc.documentId} document={doc} sortOption={sortOption} reloadDocuments={fetchDocs} />
                                                 ))}
                                             </div>
                                         </div>
