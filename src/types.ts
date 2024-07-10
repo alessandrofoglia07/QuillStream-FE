@@ -29,6 +29,14 @@ export interface Document {
     };
 }
 
+export interface UserDocument {
+    userId: string; // partition key
+    documentId: string; // sort key
+    role: 'author' | 'editor';
+    lastAccessedAt: string;
+    createdAt: string;
+}
+
 export interface WebSocketConnection {
     connectionId: string; // partition key
     documentId: string; // sort key

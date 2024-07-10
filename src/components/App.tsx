@@ -8,12 +8,14 @@ import ForgotPage from '@/pages/account/ForgotPage';
 import ResetPage from '@/pages/account/ResetPage';
 import DocumentPage from '@/pages/DocumentPage';
 import PrivateRoutes from './PrivateRoutes';
+import AccountPage from '@/pages/AccountPage';
 
 const App: React.FC = () => {
     return (
         <Routes>
             <Route element={<PrivateRoutes />}>
                 <Route path='/' element={<HomePage />} />
+                <Route path='/account' element={<AccountPage />} />
                 <Route path='/documents/:documentId' element={<DocumentPage />} />
             </Route>
 

@@ -4,8 +4,10 @@ import Logo from './Logo';
 import { FaMagnifyingGlass as SearchIcon } from 'react-icons/fa6';
 import { appearanceToIcon } from '@/utils/appearanceIconConverter';
 import Button from './CustomButton';
+import { useNavigate } from 'react-router-dom';
 
 const NavbarMainPage: React.FC = () => {
+    const navigate = useNavigate();
     const { getSession } = useContext(AccountContext);
 
     const [appearance, setAppearance] = useState<string | undefined>(undefined);
@@ -37,7 +39,7 @@ const NavbarMainPage: React.FC = () => {
                 </div>
             </div>
             <div className='flex h-full w-10 items-center justify-end md:w-[calc(3rem+150px)]'>
-                <Button data-secondary className='!hover:bg-slate-600/20 !p-3'>
+                <Button onClick={() => navigate('/account')} data-secondary className='!hover:bg-slate-600/20 !p-3'>
                     {appearanceToIcon(appearance, 'text-2xl text-white')}
                 </Button>
             </div>
