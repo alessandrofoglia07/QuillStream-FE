@@ -72,14 +72,24 @@ const AccountPage: React.FC = () => {
             </header>
             <main>
                 {user ? (
-                    <div className='mx-auto h-full max-w-[30rem] py-4 md:max-w-[40rem] lg:max-w-[60rem]'>
+                    <div className='mx-auto my-24 max-w-[30rem] rounded-md border border-white/10 p-6 shadow-sm sm:p-12 md:max-w-[40rem] md:p-24 lg:max-w-[60rem]'>
                         <Button onClick={() => navigate('/account')} data-secondary className='!hover:bg-slate-600/20 mb-6 mt-12 !p-3'>
                             {appearanceToIcon(user['custom::appearance'], 'text-7xl text-white')}
                         </Button>
                         <h1 className='text-4xl font-bold'>@{user.username}</h1>
-                        <p className='mt-4 text-lg'>Account created on {new Date(user.auth_time * 1000).toLocaleDateString()}</p>
-                        {ownedDocsCount !== undefined && <p className='mt-4 text-lg'>Documents owned: {ownedDocsCount}</p>}
-                        {sharedDocsCount !== undefined && <p className='mt-4 text-lg'>Documents shared: {sharedDocsCount}</p>}
+                        <p className='mt-4 text-lg'>
+                            Account created on <span className='font-semibold'>{new Date(user.auth_time * 1000).toLocaleDateString()}</span>
+                        </p>
+                        {ownedDocsCount !== undefined && (
+                            <p className='mt-4 text-lg'>
+                                Documents owned: <span className='font-semibold'>{ownedDocsCount}</span>
+                            </p>
+                        )}
+                        {sharedDocsCount !== undefined && (
+                            <p className='text-lg'>
+                                Documents shared: <span className='font-semibold'>{sharedDocsCount}</span>
+                            </p>
+                        )}
                         <Button onClick={handleSignOut} className='!hover:bg-slate-600/20 mt-12 px-6 py-3'>
                             Sign out
                         </Button>

@@ -21,7 +21,7 @@ const NavbarMainPage: React.FC = () => {
 
     return (
         <nav className='fixed left-0 top-0 z-50 m-4 mb-8 flex h-12 w-[calc(100svw-2rem)] items-center justify-between'>
-            <div className='h-full pr-4 md:pr-8'>
+            <a className='h-full pr-4 md:pr-8' href='/'>
                 <div className='flex items-center -md:hidden'>
                     <Logo height='3rem' onlyLogo />
                     <Logo height='1.5rem' width='150px' onlyText />
@@ -29,7 +29,7 @@ const NavbarMainPage: React.FC = () => {
                 <div className='md:hidden'>
                     <Logo height='2.5rem' width='2.5rem' onlyLogo />
                 </div>
-            </div>
+            </a>
             <div className='flex h-full items-center md:pr-8 -md:w-3/4'>
                 <div className='flex w-full items-center rounded-llg border border-white/5 bg-light-grey py-3 pl-3 pr-1 shadow-sm transition-all focus-within:shadow-md md:w-[40vw] md:pl-6 md:pr-12'>
                     <div className='grid h-full w-1/6 max-w-12 place-items-start px-1'>
