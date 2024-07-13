@@ -11,23 +11,24 @@ import { NotificationContext } from '@/context/NotificationContext';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 
 interface CognitoUserSessionPayload {
+    aud: string;
     auth_time: number;
-    client_id: string;
+    'cognito:username': string;
+    'custom:appearance'?: string;
+    email: string;
+    email_verified: boolean;
     event_id: string;
     exp: number;
     iat: number;
     iss: string;
     jti: string;
-    scope: string;
     sub: string;
     token_use: string;
-    username: string;
-    'custom::appearance'?: string;
 }
 
 const AccountPage: React.FC = () => {
     const navigate = useNavigate();
-    const { getSession, logout } = useContext(AccountContext);
+    const { getSession, logout, updateAppearance } = useContext(AccountContext);
     const { setNotification } = useContext(NotificationContext);
 
     const [user, setUser] = useState<CognitoUserSessionPayload | undefined>(undefined); // undefined is only used for the initial state
@@ -40,7 +41,7 @@ const AccountPage: React.FC = () => {
             if (session === null) {
                 return navigate('/account/signin');
             }
-            setUser(session.getAccessToken().decodePayload() as CognitoUserSessionPayload);
+            setUser(session.getIdToken().decodePayload() as CognitoUserSessionPayload);
         } catch (err) {
             navigate('/account/signin');
         }
@@ -64,21 +65,31 @@ const AccountPage: React.FC = () => {
 
     const handleSignOut = () => {
         logout();
+        navigate('/account/signin');
     };
 
-    const handleChangeAppearance = (appearance: number) => {};
+    const handleChangeAppearance = async (appearance: number) => {
+        try {
+            await updateAppearance(appearance);
+            await fetchUserData();
+            setNotification({ type: 'success', message: 'Appearance changed successfully' });
+        } catch (err) {
+            const result = handleError(err);
+            setNotification(result.notification);
+        }
+    };
 
     return (
         <div>
             <header className='h-20'>
-                <Navbar />
+                <Navbar appearance={user?.['custom:appearance']} />
             </header>
             <main>
                 {user ? (
                     <div className='mx-auto my-24 max-w-[30rem] rounded-md border border-white/10 p-6 shadow-sm sm:p-12 md:max-w-[40rem] md:p-24 lg:max-w-[60rem]'>
                         <Menu>
                             <MenuButton className='!hover:bg-slate-600/20 mb-6 mt-2 rounded-md bg-transparent !p-3 px-8 py-2 text-sm/6 text-white/60 transition-colors duration-75 hover:bg-light-grey'>
-                                {appearanceToIcon(user['custom::appearance'], 'text-7xl text-white')}
+                                {appearanceToIcon(user['custom:appearance'], 'text-7xl text-white')}
                             </MenuButton>
                             <MenuItems
                                 transition
@@ -89,14 +100,14 @@ const AccountPage: React.FC = () => {
                                         <button onClick={() => handleChangeAppearance(option)} className='group aspect-square rounded-lg px-3 py-1.5 data-[focus]:bg-white/10'>
                                             {appearanceToIcon(
                                                 option.toString(),
-                                                (user['custom::appearance'] || '1') === option.toString() ? 'text-4xl text-white/60' : 'text-4xl text-white'
+                                                (user['custom:appearance'] || '1') === option.toString() ? 'text-4xl text-white/60' : 'text-4xl text-white'
                                             )}
                                         </button>
                                     </MenuItem>
                                 ))}
                             </MenuItems>
                         </Menu>
-                        <h1 className='text-4xl font-bold'>@{user.username}</h1>
+                        <h1 className='text-4xl font-bold'>@{user['cognito:username']}</h1>
                         <p className='mt-4 text-lg'>
                             Account created on <span className='font-semibold'>{new Date(user.auth_time * 1000).toLocaleDateString()}</span>
                         </p>

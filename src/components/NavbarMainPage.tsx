@@ -6,18 +6,22 @@ import { appearanceToIcon } from '@/utils/appearanceIconConverter';
 import Button from './CustomButton';
 import { useNavigate } from 'react-router-dom';
 
-const NavbarMainPage: React.FC = () => {
+interface Props {
+    appearance?: string;
+}
+
+const NavbarMainPage: React.FC<Props> = ({ appearance }: Props) => {
     const navigate = useNavigate();
     const { getSession } = useContext(AccountContext);
 
-    const [appearance, setAppearance] = useState<string | undefined>(undefined);
+    const [appearanceState, setAppearance] = useState<string | undefined>(appearance);
 
     useEffect(() => {
         (async () => {
             const session = await getSession();
-            setAppearance(session?.getAccessToken().payload['custom:appearance']);
+            setAppearance(session?.getIdToken().payload['custom:appearance']);
         })();
-    }, []);
+    }, [appearance]);
 
     return (
         <nav className='fixed left-0 top-0 z-50 m-4 mb-8 flex h-12 w-[calc(100svw-2rem)] items-center justify-between'>
@@ -40,7 +44,7 @@ const NavbarMainPage: React.FC = () => {
             </div>
             <div className='flex h-full w-10 items-center justify-end md:w-[calc(3rem+150px)]'>
                 <Button onClick={() => navigate('/account')} data-secondary className='!hover:bg-slate-600/20 !p-3'>
-                    {appearanceToIcon(appearance, 'text-2xl text-white')}
+                    {appearanceToIcon(appearanceState, 'text-2xl text-white')}
                 </Button>
             </div>
         </nav>

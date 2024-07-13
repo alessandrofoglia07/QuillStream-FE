@@ -6,6 +6,7 @@ import { passwordSchema } from '@/utils/schemas/authSchemas';
 interface IAuthContext {
     authenticate: (Username: string, Password: string) => Promise<CognitoUserSession>;
     getSession: () => Promise<CognitoUserSession | null>;
+    updateAppearance: (appearance: number) => Promise<void>;
     logout: () => void;
 }
 
@@ -42,13 +43,36 @@ const Account = ({ children }: PropsWithChildren) => {
         });
     };
 
+    const updateAppearance = async (appearance: number) => {
+        return await new Promise<void>((resolve, reject) => {
+            if (appearance < 1 || appearance > 9) return reject('Appearance value out of range.');
+            const user = userPool.getCurrentUser();
+            if (!user) return reject('No user found.');
+            user.getSession((err: Error | null) => {
+                if (err) return reject(err);
+                user.updateAttributes(
+                    [
+                        {
+                            Name: 'custom:appearance',
+                            Value: appearance.toString()
+                        }
+                    ],
+                    (err) => {
+                        if (err) return reject(err);
+                        resolve();
+                    }
+                );
+            });
+        });
+    };
+
     const logout = () => {
         const user = userPool.getCurrentUser();
         if (!user) return;
         user.signOut();
     };
 
-    return <AccountContext.Provider value={{ authenticate, getSession, logout }}>{children}</AccountContext.Provider>;
+    return <AccountContext.Provider value={{ authenticate, getSession, logout, updateAppearance }}>{children}</AccountContext.Provider>;
 };
 
 export { Account, AccountContext };
