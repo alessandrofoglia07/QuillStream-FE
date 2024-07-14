@@ -11,19 +11,53 @@ import { FaSortAlphaDown as SortIcon } from 'react-icons/fa';
 import { PiHandArrowDownBold as OwnIcon } from 'react-icons/pi';
 import { FaPlus as PlusIcon } from 'react-icons/fa6';
 import Spinner from '@/components/Spinner';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 type OwnedDocumentsOptions = 'Owned by anyone' | 'Owned by me' | 'Shared';
 
+const SORT_OPTIONS = ['Last accessed by me', 'Title', 'Last modified'];
+const OWNED_DOCUMENTS_OPTIONS = ['Owned by anyone', 'Owned by me', 'Shared'];
+
 const MainPage: React.FC = () => {
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const { setNotification } = useContext(NotificationContext);
 
+    const initOptions = () => {
+        const sortOptionParams = searchParams.get('sort');
+        const ownedDocumentsOptionParams = searchParams.get('owned');
+
+        let sortOption: SortOption, ownedDocumentsOption: OwnedDocumentsOptions;
+
+        if (sortOptionParams && SORT_OPTIONS.includes(sortOptionParams)) {
+            sortOption = sortOptionParams as SortOption;
+        } else {
+            sortOption = 'Last accessed by me';
+        }
+
+        if (ownedDocumentsOptionParams && OWNED_DOCUMENTS_OPTIONS.includes(ownedDocumentsOptionParams)) {
+            ownedDocumentsOption = ownedDocumentsOptionParams as OwnedDocumentsOptions;
+        } else {
+            ownedDocumentsOption = 'Owned by anyone';
+        }
+
+        const result = {
+            sort: sortOption,
+            owned: ownedDocumentsOption
+        };
+
+        if (JSON.stringify(result) !== JSON.stringify({ sort: sortOptionParams, owned: ownedDocumentsOptionParams })) {
+            setSearchParams({ sort: sortOption, owned: ownedDocumentsOption });
+        }
+
+        return result;
+    };
+
     const [loading, setLoading] = useState(true);
     const [documents, setDocuments] = useState<Document[] | null>(null);
-    const [sortOption, setSortOption] = useState<SortOption>('Last accessed by me');
-    const [ownedDocumentsOption, setOwnedDocumentsOption] = useState<OwnedDocumentsOptions>('Owned by anyone');
+    const [sortOption, setSortOption] = useState<SortOption>(initOptions().sort);
+    const [ownedDocumentsOption, setOwnedDocumentsOption] = useState<OwnedDocumentsOptions>(initOptions().owned);
 
     const fetchDocs = async () => {
         try {
@@ -117,6 +151,20 @@ const MainPage: React.FC = () => {
         }
     };
 
+    const setSortSelectedOption = (option: SortOption) => {
+        setSortOption(option);
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.set('sort', option);
+        setSearchParams(newSearchParams);
+    };
+
+    const setOwnedDocumentsSelectedOption = (option: OwnedDocumentsOptions) => {
+        setOwnedDocumentsOption(option);
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.set('owned', option);
+        setSearchParams(newSearchParams);
+    };
+
     return (
         <div>
             <header className='h-20'>
@@ -136,7 +184,7 @@ const MainPage: React.FC = () => {
                             }
                             options={['Last accessed by me', 'Title', 'Last modified']}
                             selectedOption={sortOption}
-                            setSelectedOption={setSortOption as (option: string) => void}
+                            setSelectedOption={setSortSelectedOption as (option: string) => void}
                         />
                         <DropdownMenu
                             buttonText={
@@ -146,7 +194,7 @@ const MainPage: React.FC = () => {
                             }
                             options={['Owned by anyone', 'Owned by me', 'Shared']}
                             selectedOption={ownedDocumentsOption}
-                            setSelectedOption={setOwnedDocumentsOption as (option: string) => void}
+                            setSelectedOption={setOwnedDocumentsSelectedOption as (option: string) => void}
                         />
                     </div>
                     {loading ? (
