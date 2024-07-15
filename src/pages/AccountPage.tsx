@@ -32,6 +32,7 @@ const AccountPage: React.FC = () => {
     const { setNotification } = useContext(NotificationContext);
 
     const [user, setUser] = useState<CognitoUserSessionPayload | undefined>(undefined); // undefined is only used for the initial state
+    const [countLoading, setCountLoading] = useState(true);
     const [ownedDocsCount, setOwnedDocsCount] = useState<number | undefined>(undefined);
     const [sharedDocsCount, setSharedDocsCount] = useState<number | undefined>(undefined);
 
@@ -55,6 +56,8 @@ const AccountPage: React.FC = () => {
         } catch (err) {
             const result = handleError(err);
             setNotification(result.notification);
+        } finally {
+            setCountLoading(false);
         }
     };
 
@@ -111,15 +114,21 @@ const AccountPage: React.FC = () => {
                         <p className='mt-4 text-lg'>
                             Account created on <span className='font-semibold'>{new Date(user.auth_time * 1000).toLocaleDateString()}</span>
                         </p>
-                        {ownedDocsCount !== undefined && (
-                            <p className='mt-4 text-lg'>
-                                Documents owned: <span className='font-semibold'>{ownedDocsCount}</span>
-                            </p>
-                        )}
-                        {sharedDocsCount !== undefined && (
-                            <p className='text-lg'>
-                                Documents shared: <span className='font-semibold'>{sharedDocsCount}</span>
-                            </p>
+                        {countLoading ? (
+                            <Spinner className='mt-8' />
+                        ) : (
+                            <>
+                                {ownedDocsCount !== undefined && (
+                                    <p className='mt-4 text-lg'>
+                                        Documents owned: <span className='font-semibold'>{ownedDocsCount}</span>
+                                    </p>
+                                )}
+                                {sharedDocsCount !== undefined && (
+                                    <p className='text-lg'>
+                                        Documents shared: <span className='font-semibold'>{sharedDocsCount}</span>
+                                    </p>
+                                )}
+                            </>
                         )}
                         <Button onClick={handleSignOut} className='!hover:bg-slate-600/20 mt-12 px-6 py-3'>
                             Sign out
