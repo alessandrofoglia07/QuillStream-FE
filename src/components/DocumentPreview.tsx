@@ -4,7 +4,6 @@ import { BsThreeDotsVertical as OptionsIcon } from 'react-icons/bs';
 import { Dialog, DialogPanel, DialogTitle, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { FaRegEdit as RenameIcon, FaRegTrashAlt as DeleteIcon } from 'react-icons/fa';
 import { FaArrowUpRightFromSquare as OpenIcon } from 'react-icons/fa6';
-import { useNavigate } from 'react-router-dom';
 import Button from './CustomButton';
 import { handleError } from '@/utils/handleError';
 import { NotificationContext } from '@/context/NotificationContext';
@@ -17,8 +16,6 @@ interface Props {
 }
 
 const DocumentPreview: React.FC<Props> = ({ document, sortOption, reloadDocuments }) => {
-    const navigate = useNavigate();
-
     const { setNotification } = useContext(NotificationContext);
 
     const [renameModalOpen, setRenameModalOpen] = useState<boolean>(false);
@@ -46,11 +43,6 @@ const DocumentPreview: React.FC<Props> = ({ document, sortOption, reloadDocument
                 minute: '2-digit'
             });
         }
-    };
-
-    const handleOpen = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (e.ctrlKey) return window.open(`/documents/${document.documentId}`, '_blank');
-        navigate(`/documents/${document.documentId}`);
     };
 
     const handleRename = async () => {
@@ -98,17 +90,13 @@ const DocumentPreview: React.FC<Props> = ({ document, sortOption, reloadDocument
         }
     };
 
-    const handleOpenInNewTab = () => {
-        window.open(`/documents/${document.documentId}`, '_blank');
-    };
-
     return (
         <>
-            <div
+            <a
                 role='button'
                 tabIndex={0}
                 className='flex min-h-12 w-full items-center rounded-lg text-left transition-colors duration-75 *:h-full hover:bg-white/10'
-                onClick={handleOpen}>
+                href={`/documents/${document.documentId}`}>
                 <div className='grid w-[10%] place-items-center'>
                     <div className='aspect-square w-5 rounded bg-white/70' />
                 </div>
@@ -141,13 +129,16 @@ const DocumentPreview: React.FC<Props> = ({ document, sortOption, reloadDocument
                             </button>
                         </MenuItem>
                         <MenuItem>
-                            <button onClick={handleOpenInNewTab} className='group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-[focus]:bg-white/10'>
+                            <a
+                                href={`/documents/${document.documentId}`}
+                                target='_blank'
+                                className='group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-[focus]:bg-white/10'>
                                 <OpenIcon size={18} className='mr-0.5' /> Open in new tab
-                            </button>
+                            </a>
                         </MenuItem>
                     </MenuItems>
                 </Menu>
-            </div>
+            </a>
             <Dialog open={deleteModalOpen} as='div' className='relative z-10 focus:outline-none' onClose={() => setDeleteModalOpen(false)}>
                 <div className='fixed inset-0 z-10 w-screen overflow-y-auto'>
                     <div className='flex min-h-full items-center justify-center p-4'>
