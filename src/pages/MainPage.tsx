@@ -101,7 +101,7 @@ const MainPage: React.FC = () => {
                     Older: [] as Document[]
                 };
 
-                docs = docs.sort((a, b) => parseInt(b.user.lastAccessedAt) - parseInt(a.user.lastAccessedAt));
+                docs.sort((a, b) => parseInt(b.user.lastAccessedAt) - parseInt(a.user.lastAccessedAt));
 
                 for (const doc of docs) {
                     if (doc.user.lastAccessedAt === '-1') {
