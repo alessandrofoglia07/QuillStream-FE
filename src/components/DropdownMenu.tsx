@@ -6,7 +6,7 @@ import { FaCheck as CheckIcon } from 'react-icons/fa6';
 interface Props {
     buttonText: React.ReactNode;
     options: string[];
-    selectedOption: string;
+    selectedOption: string | undefined;
     setSelectedOption: (option: string) => void;
 }
 

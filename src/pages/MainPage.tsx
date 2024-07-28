@@ -24,6 +24,11 @@ const MainPage: React.FC = () => {
 
     const { setNotification } = useContext(NotificationContext);
 
+    const [loading, setLoading] = useState(true);
+    const [documents, setDocuments] = useState<Document[] | null>(null);
+    const [sortOption, setSortOption] = useState<SortOption | undefined>(undefined);
+    const [ownedDocumentsOption, setOwnedDocumentsOption] = useState<OwnedDocumentsOptions | undefined>(undefined);
+
     const initOptions = () => {
         const sortOptionParams = searchParams.get('sort');
         const ownedDocumentsOptionParams = searchParams.get('owned');
@@ -54,11 +59,6 @@ const MainPage: React.FC = () => {
         return result;
     };
 
-    const [loading, setLoading] = useState(true);
-    const [documents, setDocuments] = useState<Document[] | null>(null);
-    const [sortOption, setSortOption] = useState<SortOption>(initOptions().sort);
-    const [ownedDocumentsOption, setOwnedDocumentsOption] = useState<OwnedDocumentsOptions>(initOptions().owned);
-
     const fetchDocs = async () => {
         try {
             const res = await axios.get('/documents/user');
@@ -73,6 +73,8 @@ const MainPage: React.FC = () => {
 
     useEffect(() => {
         fetchDocs();
+        setSortOption(initOptions().sort);
+        setOwnedDocumentsOption(initOptions().owned);
     }, []);
 
     const handleNewDocument = async () => {
@@ -137,6 +139,8 @@ const MainPage: React.FC = () => {
                     })
                 };
             }
+            default:
+                return { 'Documents by title': docs.sort((a, b) => a.title.localeCompare(b.title)) };
         }
     };
 
@@ -148,6 +152,8 @@ const MainPage: React.FC = () => {
                 return docs.filter((doc) => doc.user.role === 'author');
             case 'Shared':
                 return docs.filter((doc) => doc.user.role === 'editor');
+            default:
+                return docs;
         }
     };
 

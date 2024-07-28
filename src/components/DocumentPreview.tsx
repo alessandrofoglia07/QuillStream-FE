@@ -11,7 +11,7 @@ import axios from '@/api/axios';
 
 interface Props {
     document: Document;
-    sortOption: SortOption;
+    sortOption: SortOption | undefined;
     reloadDocuments: () => void;
 }
 
