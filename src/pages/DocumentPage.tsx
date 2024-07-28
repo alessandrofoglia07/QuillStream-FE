@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { NotificationContext } from '@/context/NotificationContext';
 import { handleError } from '@/utils/handleError';
 import { useParams } from 'react-router-dom';
@@ -8,43 +8,77 @@ import Spinner from '@/components/Spinner';
 import Button from '@/components/CustomButton';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { FaAngleDown as DownIcon } from 'react-icons/fa6';
+import useWebSocket from 'react-use-websocket';
+import { AccountContext } from '@/context/AccountContext';
+
+interface Loading {
+    websocketConnection: boolean;
+    documentData: boolean;
+}
 
 const DocumentPage: React.FC = () => {
     const { documentId } = useParams();
+
+    const { getSession } = useContext(AccountContext);
     const { setNotification } = useContext(NotificationContext);
 
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState<Loading>({ websocketConnection: true, documentData: true });
     const [error, setError] = useState<string | null>(null);
     const [document, setDocument] = useState<Document | null>(null);
+
+    const didUnmount = useRef(false);
+
+    const getSocketUrl = useCallback(async () => {
+        const session = await getSession();
+        const token = session?.getAccessToken().getJwtToken();
+        return token ? `${import.meta.env.VITE_WEBSOCKET_API_URL}?token=${token}` : import.meta.env.VITE_WEBSOCKET_API_URL;
+    }, [getSession]);
+
+    useWebSocket(getSocketUrl, {
+        onError: () => {
+            setError('WebSocket error. Failed to connect.\n');
+        },
+        onOpen: () => {
+            setLoading((prev) => ({ ...prev, websocketConnection: false }));
+        },
+        shouldReconnect: () => !didUnmount.current,
+        reconnectInterval: 3000,
+        queryParams: {
+            documentId: documentId || ''
+        },
+        filter: (message) => JSON.parse(message.data).type === 'ping'
+    });
 
     const reload = window.location.reload.bind(window.location);
 
     const fetchDocumentData = async () => {
-        const res = await axios.get(`/documents/${documentId}`);
-        setDocument(res.data);
-    };
-
-    const initConnection = async () => {
         try {
-            await fetchDocumentData();
-
-            // TODO: Add websocket connection
+            const res = await axios.get(`/documents/${documentId}`);
+            setDocument(res.data);
         } catch (err) {
             const result = handleError(err);
             setNotification(result.notification);
             setError(result.message);
         } finally {
-            setLoading(false);
+            setLoading((prev) => ({ ...prev, documentData: false }));
         }
     };
 
     useEffect(() => {
-        initConnection();
-    }, []);
+        if (!documentId) {
+            setTimeout(() => {
+                setError('Document ID is required.\n');
+            }, 500); // Delay to prevent overlapping with WebSocket error
+        }
 
-    if (loading) {
-        return <Spinner className='mx-auto mt-[45vh]' />;
-    }
+        if (!error) {
+            fetchDocumentData();
+        }
+
+        return () => {
+            didUnmount.current = true;
+        };
+    }, []);
 
     if (error) {
         return (
@@ -62,7 +96,7 @@ const DocumentPage: React.FC = () => {
                                     <span className='text-sm/6 font-medium'>Error Details</span>
                                     <DownIcon className='size-5 group-data-[open]:rotate-180' />
                                 </DisclosureButton>
-                                <DisclosurePanel className='my-4 font-mono text-sm/5 text-red-400/70'>{'Connection refused from source ws://123.hello.com/'}</DisclosurePanel>
+                                <DisclosurePanel className='my-4 font-mono text-sm/5 text-red-400/70'>{error}</DisclosurePanel>
                             </Disclosure>
                         </div>
                     </div>
@@ -71,7 +105,11 @@ const DocumentPage: React.FC = () => {
         );
     }
 
-    return <div></div>;
+    if (Object.values(loading).some((val) => val)) {
+        return <Spinner className='mx-auto mt-[45vh]' />;
+    }
+
+    return <div>Hello</div>;
 };
 
 export default DocumentPage;
