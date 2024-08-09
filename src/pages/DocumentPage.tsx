@@ -10,11 +10,18 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react
 import { FaAngleDown as DownIcon } from 'react-icons/fa6';
 import useWebSocket from 'react-use-websocket';
 import { AccountContext } from '@/context/AccountContext';
+import EditorNavbar from '@/components/EditorNavbar';
+import { FloatingMenu, BubbleMenu, useEditor, EditorContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 
 interface Loading {
     websocketConnection: boolean;
     documentData: boolean;
 }
+
+const extensions = [StarterKit];
+
+const content = '<p>Hello World!</p>';
 
 const DocumentPage: React.FC = () => {
     const { documentId } = useParams();
@@ -33,6 +40,11 @@ const DocumentPage: React.FC = () => {
         const token = session?.getAccessToken().getJwtToken();
         return token ? `${import.meta.env.VITE_WEBSOCKET_API_URL}?token=${token}` : import.meta.env.VITE_WEBSOCKET_API_URL;
     }, [getSession]);
+
+    const editor = useEditor({
+        extensions,
+        content
+    });
 
     useWebSocket(getSocketUrl, {
         onError: () => {
@@ -80,7 +92,7 @@ const DocumentPage: React.FC = () => {
         };
     }, []);
 
-    if (error) {
+    if (error || !document) {
         return (
             <div className='relative z-10 focus:outline-none'>
                 <div className='fixed inset-0 z-10 w-screen overflow-y-auto'>
@@ -109,7 +121,18 @@ const DocumentPage: React.FC = () => {
         return <Spinner className='mx-auto mt-[45vh]' />;
     }
 
-    return <div>Hello</div>;
+    return (
+        <div>
+            <header className='h-20'>
+                <EditorNavbar document={document} />
+            </header>
+            <main>
+                <EditorContent editor={editor} />
+                <FloatingMenu editor={editor}>This is the floating menu</FloatingMenu>
+                <BubbleMenu editor={editor}>This is the bubble menu</BubbleMenu>
+            </main>
+        </div>
+    );
 };
 
 export default DocumentPage;
