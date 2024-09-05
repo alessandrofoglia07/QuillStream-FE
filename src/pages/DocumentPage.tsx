@@ -11,17 +11,14 @@ import { FaAngleDown as DownIcon } from 'react-icons/fa6';
 import useWebSocket from 'react-use-websocket';
 import { AccountContext } from '@/context/AccountContext';
 import EditorNavbar from '@/components/EditorNavbar';
-import { FloatingMenu, BubbleMenu, useEditor, EditorContent } from '@tiptap/react';
+import { EditorProvider } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import MenuBar from '@/components/DocumentMenuBar';
 
 interface Loading {
     websocketConnection: boolean;
     documentData: boolean;
 }
-
-const extensions = [StarterKit];
-
-const content = '<p>Hello World!</p>';
 
 const DocumentPage: React.FC = () => {
     const { documentId } = useParams();
@@ -40,11 +37,6 @@ const DocumentPage: React.FC = () => {
         const token = session?.getAccessToken().getJwtToken();
         return token ? `${import.meta.env.VITE_WEBSOCKET_API_URL}?token=${token}` : import.meta.env.VITE_WEBSOCKET_API_URL;
     }, [getSession]);
-
-    const editor = useEditor({
-        extensions,
-        content
-    });
 
     useWebSocket(getSocketUrl, {
         onError: () => {
@@ -127,9 +119,17 @@ const DocumentPage: React.FC = () => {
                 <EditorNavbar document={document} />
             </header>
             <main>
-                <EditorContent editor={editor} />
-                <FloatingMenu editor={editor}>This is the floating menu</FloatingMenu>
-                <BubbleMenu editor={editor}>This is the bubble menu</BubbleMenu>
+                <EditorProvider
+                    extensions={[StarterKit]}
+                    content={document.content}
+                    slotBefore={<MenuBar />}
+                    autofocus={true}
+                    editorProps={{
+                        // a 51rem and 66rem width looks like a real A4 page
+                        attributes: {
+                            class: 'mx-auto w-[90vw] max-w-[51rem] bg-white/20 min-h-[66rem] p-16 focus-visible:outline-none rounded-sm text-lg'
+                        }
+                    }}></EditorProvider>
             </main>
         </div>
     );
