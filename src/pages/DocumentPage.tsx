@@ -119,6 +119,7 @@ const DocumentPage: React.FC = () => {
                 <EditorNavbar document={document} />
             </header>
             <main>
+                <div className='fixed top-0 z-10 h-36 w-full bg-white/5 shadow-lg' />
                 <EditorProvider
                     extensions={[StarterKit]}
                     content={document.content}
@@ -127,7 +128,7 @@ const DocumentPage: React.FC = () => {
                     editorProps={{
                         // a 51rem and 66rem width looks like a real A4 page
                         attributes: {
-                            class: 'mx-auto w-[90vw] max-w-[51rem] bg-white/20 min-h-[66rem] p-16 focus-visible:outline-none rounded-sm text-lg'
+                            class: 'mx-auto w-[90vw] mt-20 max-w-[51rem] bg-white/20 min-h-[66rem] p-16 focus-visible:outline-none rounded-sm text-lg z-0'
                         }
                     }}></EditorProvider>
             </main>

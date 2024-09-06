@@ -1,6 +1,7 @@
 import { useCurrentEditor } from '@tiptap/react';
 import { FaBold as BoldIcon, FaItalic as ItalicIcon, FaStrikethrough as StrikeIcon } from 'react-icons/fa';
 import React from 'react';
+import { FaWandMagicSparkles as MagicIcon } from 'react-icons/fa6';
 
 interface ButtonConfig {
     type: 'button';
@@ -54,10 +55,10 @@ const MenuBar: React.FC = () => {
     ];
 
     return (
-        <div className='fixed left-1/2 flex w-[90vw] -translate-x-1/2 items-center rounded-[14px] bg-white/20 p-2 shadow-md'>
+        <div className='fixed left-1/2 top-20 z-20 flex min-h-14 w-[90vw] max-w-[70rem] -translate-x-1/2 items-center rounded-[14px] bg-white/20 p-2 shadow-lg'>
             {buttons.map((el, idx) =>
                 el.type === 'separator' ? (
-                    <div key={idx} className={`mx-1 h-10 w-0.5 rounded-full bg-white ${el.hidden ? 'bg-opacity-0' : 'bg-opacity-20'}`}></div>
+                    <div key={idx} className={`mx-1 h-10 w-0.5 rounded-full bg-white ${el.hidden ? 'bg-opacity-0' : 'bg-opacity-20'} grid`}></div>
                 ) : (
                     <button
                         key={idx}
