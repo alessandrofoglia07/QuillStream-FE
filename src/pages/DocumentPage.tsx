@@ -40,6 +40,7 @@ const DocumentPage: React.FC = () => {
 
     useWebSocket(getSocketUrl, {
         onError: () => {
+            if (didUnmount.current) return;
             setError('WebSocket error. Failed to connect.\n');
         },
         onOpen: () => {
