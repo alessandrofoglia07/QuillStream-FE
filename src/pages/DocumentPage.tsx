@@ -14,6 +14,8 @@ import EditorNavbar from '@/components/EditorNavbar';
 import { EditorProvider } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import MenuBar from '@/components/DocumentMenuBar';
+import { Collaboration } from '@tiptap/extension-collaboration';
+import * as Y from 'yjs';
 
 interface Loading {
     websocketConnection: boolean;
@@ -32,13 +34,22 @@ const DocumentPage: React.FC = () => {
 
     const didUnmount = useRef(false);
 
+    const ydoc = useRef(new Y.Doc());
+
     const getSocketUrl = useCallback(async () => {
         const session = await getSession();
         const token = session?.getAccessToken().getJwtToken();
         return token ? `${import.meta.env.VITE_WEBSOCKET_API_URL}?token=${token}` : import.meta.env.VITE_WEBSOCKET_API_URL;
     }, [getSession]);
 
-    useWebSocket(getSocketUrl, {
+    const { sendMessage } = useWebSocket(getSocketUrl, {
+        onMessage: (event) => {
+            const message = JSON.parse(event.data);
+            if (message.type === 'sync-update') {
+                const update = new Uint8Array(message.update);
+                Y.applyUpdate(ydoc.current, update);
+            }
+        },
         onError: () => {
             if (didUnmount.current) return;
             setError('WebSocket error. Failed to connect.\n');
@@ -53,6 +64,35 @@ const DocumentPage: React.FC = () => {
         },
         filter: (message) => JSON.parse(message.data).type === 'ping'
     });
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (document && document.content) {
+                axios.patch(`/documents/${documentId}`, { content: document.content });
+            }
+        }, 5000); // save every 5 seconds
+
+        return () => clearInterval(interval);
+    }, [document]);
+
+    const broadcastChanges = useCallback(
+        (update: Uint8Array) => {
+            sendMessage(JSON.stringify({ type: 'sync-update', update, documentId }));
+        },
+        [sendMessage]
+    );
+
+    useEffect(() => {
+        const onLocalChange = (update: Uint8Array) => {
+            broadcastChanges(update);
+        };
+
+        ydoc.current.on('update', onLocalChange);
+
+        return () => {
+            ydoc.current.off('update', onLocalChange);
+        };
+    }, [broadcastChanges]);
 
     const reload = window.location.reload.bind(window.location);
 
@@ -122,7 +162,12 @@ const DocumentPage: React.FC = () => {
             <main>
                 <div className='fixed top-0 z-10 h-36 w-full bg-white/5 shadow-lg' />
                 <EditorProvider
-                    extensions={[StarterKit]}
+                    extensions={[
+                        StarterKit,
+                        Collaboration.configure({
+                            document: ydoc.current // attach the Yjs document to the editor
+                        })
+                    ]}
                     content={document.content}
                     slotBefore={<MenuBar />}
                     autofocus={true}
