@@ -14,8 +14,7 @@ import EditorNavbar from '@/components/EditorNavbar';
 import { EditorProvider } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import MenuBar from '@/components/DocumentMenuBar';
-import { Collaboration } from '@tiptap/extension-collaboration';
-import * as Y from 'yjs';
+import useDebounce from '@/hooks/useDebounce';
 
 interface Loading {
     websocketConnection: boolean;
@@ -31,11 +30,42 @@ const DocumentPage: React.FC = () => {
     const [loading, setLoading] = useState<Loading>({ websocketConnection: true, documentData: true });
     const [error, setError] = useState<string | null>(null);
     const [document, setDocument] = useState<Document | null>(null);
+    const [content, setContent] = useState<string>('');
 
     const didUnmount = useRef(false);
 
-    const ydoc = useRef(new Y.Doc());
+    const fetchDocumentData = async () => {
+        try {
+            const res = await axios.get(`/documents/${documentId}`);
+            setDocument(res.data);
+            setContent(res.data.content);
+        } catch (err) {
+            const result = handleError(err);
+            setNotification(result.notification);
+            setError(result.message);
+        } finally {
+            setLoading((prev) => ({ ...prev, documentData: false }));
+        }
+    };
 
+    // check if documentId is provided and fetch document data
+    useEffect(() => {
+        if (!documentId) {
+            setTimeout(() => {
+                setError('Document ID is required.\n');
+            }, 500); // Delay to prevent overlapping with WebSocket error
+        }
+
+        if (!error) {
+            fetchDocumentData();
+        }
+
+        return () => {
+            didUnmount.current = true;
+        };
+    }, [documentId]);
+
+    // WebSocket connection
     const getSocketUrl = useCallback(async () => {
         const session = await getSession();
         const token = session?.getAccessToken().getJwtToken();
@@ -46,8 +76,9 @@ const DocumentPage: React.FC = () => {
         onMessage: (event) => {
             const message = JSON.parse(event.data);
             if (message.type === 'sync-update') {
-                const update = new Uint8Array(message.update);
-                Y.applyUpdate(ydoc.current, update);
+                if (message.update === content) return;
+                setContent((prev) => message.update ?? prev);
+                setDocument((prev) => ({ ...prev!, content: message.update }));
             }
         },
         onError: () => {
@@ -65,65 +96,29 @@ const DocumentPage: React.FC = () => {
         filter: (message) => JSON.parse(message.data).type === 'ping'
     });
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if (document && document.content) {
-                axios.patch(`/documents/${documentId}`, { content: document.content });
-            }
-        }, 5000); // save every 5 seconds
-
-        return () => clearInterval(interval);
-    }, [document]);
-
-    const broadcastChanges = useCallback(
-        (update: Uint8Array) => {
-            sendMessage(JSON.stringify({ type: 'sync-update', update, documentId }));
-        },
-        [sendMessage]
-    );
+    const debouncedContent = useDebounce(content, 1000);
 
     useEffect(() => {
-        const onLocalChange = (update: Uint8Array) => {
-            broadcastChanges(update);
-        };
+        if (document && debouncedContent !== document.content) {
+            sendMessage(JSON.stringify({ type: 'sync-update', update: debouncedContent, documentId }));
+            saveDocument();
+        }
+    }, [debouncedContent]);
 
-        ydoc.current.on('update', onLocalChange);
-
-        return () => {
-            ydoc.current.off('update', onLocalChange);
-        };
-    }, [broadcastChanges]);
-
-    const reload = window.location.reload.bind(window.location);
-
-    const fetchDocumentData = async () => {
+    const saveDocument = async () => {
         try {
-            const res = await axios.get(`/documents/${documentId}`);
+            if (!document) return;
+            const res = await axios.patch(`/documents/${documentId}`, { content: debouncedContent });
             setDocument(res.data);
+            console.log(`Document saved ${JSON.stringify(res.data)}`);
         } catch (err) {
             const result = handleError(err);
             setNotification(result.notification);
             setError(result.message);
-        } finally {
-            setLoading((prev) => ({ ...prev, documentData: false }));
         }
     };
 
-    useEffect(() => {
-        if (!documentId) {
-            setTimeout(() => {
-                setError('Document ID is required.\n');
-            }, 500); // Delay to prevent overlapping with WebSocket error
-        }
-
-        if (!error) {
-            fetchDocumentData();
-        }
-
-        return () => {
-            didUnmount.current = true;
-        };
-    }, []);
+    const reload = window.location.reload.bind(window.location);
 
     if (error || !document) {
         return (
@@ -162,13 +157,9 @@ const DocumentPage: React.FC = () => {
             <main>
                 <div className='fixed top-0 z-10 h-36 w-full bg-white/5 shadow-lg' />
                 <EditorProvider
-                    extensions={[
-                        StarterKit,
-                        Collaboration.configure({
-                            document: ydoc.current // attach the Yjs document to the editor
-                        })
-                    ]}
-                    content={document.content}
+                    extensions={[StarterKit]}
+                    content={content}
+                    onUpdate={({ editor }) => setContent(editor.getHTML())}
                     slotBefore={<MenuBar />}
                     autofocus={true}
                     editorProps={{
