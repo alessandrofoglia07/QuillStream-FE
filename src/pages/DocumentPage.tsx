@@ -31,14 +31,17 @@ const DocumentPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [document, setDocument] = useState<Document | null>(null);
     const [content, setContent] = useState<string>('');
+    const [saved, setSaved] = useState<'' | 'Saving...' | 'Saved.'>('');
 
     const didUnmount = useRef(false);
+    const savedTimeout = useRef<number | null>(null);
 
     const fetchDocumentData = async () => {
         try {
             const res = await axios.get(`/documents/${documentId}`);
             setDocument(res.data);
             setContent(res.data.content);
+            setSaved('');
         } catch (err) {
             const result = handleError(err);
             setNotification(result.notification);
@@ -99,6 +102,16 @@ const DocumentPage: React.FC = () => {
     const debouncedContent = useDebounce(content, 1000);
 
     useEffect(() => {
+        if (document && content === document.content) {
+            setSaved('Saved.');
+            savedTimeout.current && clearTimeout(savedTimeout.current);
+            savedTimeout.current = setTimeout(() => setSaved(''), 2000);
+        } else {
+            setSaved('');
+        }
+    }, [content]);
+
+    useEffect(() => {
         if (document && debouncedContent !== document.content) {
             sendMessage(JSON.stringify({ type: 'sync-update', update: debouncedContent, documentId }));
             saveDocument();
@@ -107,14 +120,18 @@ const DocumentPage: React.FC = () => {
 
     const saveDocument = async () => {
         try {
+            setSaved('Saving...');
             if (!document) return;
             const res = await axios.patch(`/documents/${documentId}`, { content: debouncedContent });
-            setDocument(res.data);
-            console.log(`Document saved ${JSON.stringify(res.data)}`);
+            setDocument(res.data.document);
+            setSaved('Saved.');
+            savedTimeout.current && clearTimeout(savedTimeout.current);
+            savedTimeout.current = setTimeout(() => setSaved(''), 2000);
         } catch (err) {
             const result = handleError(err);
             setNotification(result.notification);
             setError(result.message);
+            setSaved('');
         }
     };
 
@@ -152,7 +169,7 @@ const DocumentPage: React.FC = () => {
     return (
         <div>
             <header className='h-20'>
-                <EditorNavbar document={document} />
+                <EditorNavbar document={document} setDocument={setDocument} saved={saved} setSaved={setSaved} savedTimeout={savedTimeout} key={saved.toString()} />
             </header>
             <main>
                 <div className='fixed top-0 z-10 h-36 w-full bg-white/5 shadow-lg' />
@@ -160,7 +177,7 @@ const DocumentPage: React.FC = () => {
                     extensions={[StarterKit]}
                     content={content}
                     onUpdate={({ editor }) => setContent(editor.getHTML())}
-                    slotBefore={<MenuBar />}
+                    slotBefore={<MenuBar />} // key to force re-render on saved state change
                     autofocus={true}
                     editorProps={{
                         // a 51rem and 66rem width looks like a real A4 page

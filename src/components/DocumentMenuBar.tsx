@@ -175,21 +175,23 @@ const MenuBar: React.FC = () => {
     ];
 
     return (
-        <div className='fixed left-1/2 top-20 z-20 flex min-h-14 w-[90vw] max-w-[70rem] -translate-x-1/2 items-center rounded-[14px] bg-white/20 p-2 shadow-lg'>
-            {buttons.map((el, idx) =>
-                el.type === 'separator' ? (
-                    <div key={idx} className={`mx-1 h-10 w-0.5 rounded-full bg-white ${el.hidden ? 'bg-opacity-0' : 'bg-opacity-20'} grid`}></div>
-                ) : (
-                    <button
-                        key={idx}
-                        onClick={el.onClick}
-                        aria-label={el.ariaLabel}
-                        disabled={el.disabled}
-                        className={`mx-1 grid aspect-square h-10 place-items-center rounded-md p-2 text-white/80 hover:bg-white/20 focus-visible:outline-none disabled:!bg-transparent disabled:text-white/30 ${editor.isActive(el.property, { level: el.level }) ? '!bg-white/30' : ''}`}>
-                        {el.icon}
-                    </button>
-                )
-            )}
+        <div className='fixed left-1/2 top-20 z-20 flex min-h-14 w-[90vw] max-w-[70rem] -translate-x-1/2 items-center justify-between rounded-[14px] bg-white/20 p-2 shadow-lg'>
+            <div className='flex items-center'>
+                {buttons.map((el, idx) =>
+                    el.type === 'separator' ? (
+                        <div key={idx} className={`mx-1 h-10 w-0.5 rounded-full bg-white ${el.hidden ? 'bg-opacity-0' : 'bg-opacity-20'} grid`}></div>
+                    ) : (
+                        <button
+                            key={idx}
+                            onClick={el.onClick}
+                            aria-label={el.ariaLabel}
+                            disabled={el.disabled}
+                            className={`mx-1 grid aspect-square h-10 place-items-center rounded-md p-2 text-white/80 hover:bg-white/20 focus-visible:outline-none disabled:!bg-transparent disabled:text-white/30 ${editor.isActive(el.property, { level: el.level }) ? '!bg-white/30' : ''}`}>
+                            {el.icon}
+                        </button>
+                    )
+                )}
+            </div>
         </div>
     );
 };
