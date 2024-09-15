@@ -27,18 +27,24 @@ const DocumentPreview: React.FC<Props> = ({ document, sortOption, reloadDocument
         if (parseInt(dateStr) === -1) return 'Never';
         const date = new Date(parseInt(dateStr));
         if (date.getFullYear() !== new Date().getFullYear()) {
+            // If the date is not in the current year
             return date.toLocaleDateString([], {
                 month: 'short',
                 day: 'numeric',
                 year: 'numeric'
             });
         } else if (date.getDate() !== new Date().getDate()) {
+            // If the date is not today
             return date.toLocaleDateString([], {
                 month: 'short',
                 day: 'numeric'
             });
+        } else if (Date.now() - date.getTime() < 2 * 60 * 1000) {
+            // If the date is less than 2 minutes ago
+            return 'Just now';
         } else {
             return date.toLocaleTimeString([], {
+                // If the date is today
                 hour: '2-digit',
                 minute: '2-digit'
             });
@@ -101,16 +107,16 @@ const DocumentPreview: React.FC<Props> = ({ document, sortOption, reloadDocument
                     <div className='aspect-square w-5 rounded bg-white/70' />
                 </div>
                 <div className='line-clamp-1 flex w-1/2 items-center'>
-                    <h3>{document.title}</h3>
+                    <h3>{document.title + ' '}</h3>
                 </div>
                 <div className='line-clamp-1 flex w-[15%] items-center px-2 text-white/70'>
-                    <p>{document.authorName}</p>
+                    <p>{document.authorName + ' '}</p>
                 </div>
                 <div className='line-clamp-1 flex w-[15%] items-center pl-2 text-white/70'>
                     <p>{formatDate(sortOption === 'Last accessed by me' ? document.user.lastAccessedAt : document.updatedAt)}</p>
                 </div>
                 <Menu>
-                    <MenuButton className='mx-auto grid aspect-square place-items-center rounded-lg p-[.35] hover:bg-white/20' onClick={(e) => e.stopPropagation()}>
+                    <MenuButton className='mx-auto grid aspect-square h-full place-items-center rounded-lg hover:bg-white/20' onClick={(e) => e.stopPropagation()}>
                         <OptionsIcon size={20} />
                     </MenuButton>
                     <MenuItems
@@ -120,12 +126,12 @@ const DocumentPreview: React.FC<Props> = ({ document, sortOption, reloadDocument
                         className='origin-top-right rounded-xl border border-white/5 bg-light-grey p-2 text-sm/6 text-white transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0'>
                         <MenuItem>
                             <button onClick={() => setRenameModalOpen(true)} className='group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-[focus]:bg-white/10'>
-                                <RenameIcon size={20} /> Rename
+                                <RenameIcon size={20} /> <span className='text-white/80'>Rename</span>
                             </button>
                         </MenuItem>
                         <MenuItem>
                             <button onClick={() => setDeleteModalOpen(true)} className='group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-[focus]:bg-white/10'>
-                                <DeleteIcon className='-ml-0.5' size={20} /> <span className='ml-0.5'>Delete</span>
+                                <DeleteIcon className='-ml-0.5' size={20} /> <span className='ml-0.5 text-white/80'>Delete</span>
                             </button>
                         </MenuItem>
                         <MenuItem>
@@ -133,7 +139,7 @@ const DocumentPreview: React.FC<Props> = ({ document, sortOption, reloadDocument
                                 href={`/documents/${document.documentId}`}
                                 target='_blank'
                                 className='group flex w-full items-center gap-2 rounded-lg px-3 py-1.5 data-[focus]:bg-white/10'>
-                                <OpenIcon size={18} className='mr-0.5' /> Open in new tab
+                                <OpenIcon size={18} className='mr-0.5' /> <span className='text-white/80'>Open in new tab</span>
                             </a>
                         </MenuItem>
                     </MenuItems>

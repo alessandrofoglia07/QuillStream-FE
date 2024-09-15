@@ -17,7 +17,7 @@ interface Props {
     setDocument: React.Dispatch<React.SetStateAction<Document | null>>;
     appearance?: string;
     saved: Saved;
-    setSaved: React.Dispatch<React.SetStateAction<Saved>>;
+    setSaved: (value: Saved) => void;
     savedTimeout: React.MutableRefObject<number | null>;
 }
 
@@ -65,7 +65,9 @@ const EditorNavbar: React.FC<Props> = ({ document, setDocument, appearance, save
                 <a className='h-full pr-4 md:pr-8' href='/'>
                     <Logo height='2.5rem' width='2.5rem' onlyLogo />
                 </a>
-                <p className='text-sm font-semibold'>{saved}</p>
+                <p id='saved-text' className='text-sm font-semibold transition-opacity'>
+                    {saved}
+                </p>
             </div>
             <div className='flex h-full items-center'>
                 <input

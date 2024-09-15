@@ -10,7 +10,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react
 import { FaAngleDown as DownIcon } from 'react-icons/fa6';
 import useWebSocket from 'react-use-websocket';
 import { AccountContext } from '@/context/AccountContext';
-import EditorNavbar from '@/components/EditorNavbar';
+import EditorNavbar from '@/components/NavbarEditor';
 import { EditorProvider } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import MenuBar from '@/components/DocumentMenuBar';
