@@ -9,6 +9,7 @@ import useDebounce from '@/hooks/useDebounce';
 import axios from '@/api/axios';
 import { handleError } from '@/utils/handleError';
 import { NotificationContext } from '@/context/NotificationContext';
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 
 type Saved = '' | 'Saving...' | 'Saved.';
 
@@ -28,6 +29,7 @@ const EditorNavbar: React.FC<Props> = ({ document, setDocument, appearance, save
 
     const [documentTitle, setDocumentTitle] = useState(document.title);
     const [appearanceState, setAppearance] = useState<string | undefined>(appearance);
+    const [appearanceModalOpen, setAppearanceModalOpen] = useState(false);
 
     const debouncedDocumentTitle = useDebounce(documentTitle, 500);
 
@@ -76,10 +78,29 @@ const EditorNavbar: React.FC<Props> = ({ document, setDocument, appearance, save
                     onChange={(e) => setDocumentTitle(e.target.value)}
                     className='rounded-md bg-transparent px-2 py-1 text-white/80 focus-visible:outline-none'
                 />
-                <Button onClick={() => navigate('/account')} data-secondary className='!hover:bg-slate-600/20 !p-3'>
+                <Button onClick={() => setAppearanceModalOpen(true)} data-secondary className='!hover:bg-slate-600/20 !p-3'>
                     {appearanceToIcon(appearanceState, 'text-2xl text-white')}
                 </Button>
             </div>
+            <Dialog open={appearanceModalOpen} as='div' className='relative z-20 focus:outline-none' onClose={() => setAppearanceModalOpen(false)}>
+                <div className='fixed top-0 z-10 h-full w-full bg-black opacity-45' />
+                <div className='fixed inset-0 z-20 w-screen overflow-y-auto'>
+                    <div className='flex min-h-full items-center justify-center p-4'>
+                        <DialogPanel transition className='w-full max-w-md rounded-xl bg-white/5 p-6 backdrop-blur-2xl'>
+                            <DialogTitle as='h3' className='text-base/5 font-medium text-white'>
+                                Navigate to your account.
+                            </DialogTitle>
+                            <p className='mt-2 cursor-default text-sm/6 text-white/50'>Are you sure you want to navigate to your account? You will lose any unsaved changes.</p>
+                            <div className='mt-4 flex w-full items-center'>
+                                <Button onClick={() => navigate('/account')}>Continue</Button>
+                                <Button className='ml-2' onClick={() => setAppearanceModalOpen(false)}>
+                                    Back
+                                </Button>
+                            </div>
+                        </DialogPanel>
+                    </div>
+                </div>
+            </Dialog>
         </nav>
     );
 };
