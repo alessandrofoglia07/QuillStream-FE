@@ -43,4 +43,11 @@ export interface WebSocketConnection {
     userId: string;
 }
 
+export interface User {
+    userId: string;
+    name: string;
+    role: 'author' | 'editor';
+    appearance: number;
+}
+
 export type MainPageSortOption = 'Last accessed by me' | 'Title' | 'Last modified';

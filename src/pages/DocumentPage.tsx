@@ -177,7 +177,7 @@ const DocumentPage: React.FC = () => {
                     extensions={[StarterKit]}
                     content={content}
                     onUpdate={({ editor }) => setContent(editor.getHTML())}
-                    slotBefore={<MenuBar />} // key to force re-render on saved state change
+                    slotBefore={<MenuBar document={document} />} // key to force re-render on saved state change
                     autofocus={true}
                     editorProps={{
                         // a 51rem and 66rem width looks like a real A4 page
