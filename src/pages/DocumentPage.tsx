@@ -137,6 +137,10 @@ const DocumentPage: React.FC = () => {
 
     const reload = window.location.reload.bind(window.location);
 
+    if (Object.values(loading).some((val) => val)) {
+        return <Spinner className='mx-auto mt-[45vh]' />;
+    }
+
     if (error || !document) {
         return (
             <div className='relative z-10 focus:outline-none'>
@@ -160,10 +164,6 @@ const DocumentPage: React.FC = () => {
                 </div>
             </div>
         );
-    }
-
-    if (Object.values(loading).some((val) => val)) {
-        return <Spinner className='mx-auto mt-[45vh]' />;
     }
 
     return (
