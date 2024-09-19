@@ -15,7 +15,7 @@ import { MdFormatListBulleted as BulletListIcon } from 'react-icons/md';
 import { GoListOrdered as OrderedListIcon } from 'react-icons/go';
 import { TbBlockquote as BlockquoteIcon } from 'react-icons/tb';
 import { VscHorizontalRule as HorizontalRuleIcon } from 'react-icons/vsc';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import Button from './CustomButton';
 import { handleError } from '@/utils/handleError';
@@ -23,7 +23,7 @@ import { NotificationContext } from '@/context/NotificationContext';
 import axios from '@/api/axios';
 import { Document, User } from '@/types';
 import Spinner from './Spinner';
-import { appearanceToIcon } from '@/utils/appearanceIconConverter';
+import EditorPreview from './EditorPreview';
 
 interface ButtonConfig {
     type: 'button';
@@ -55,6 +55,8 @@ const MenuBar: React.FC<Props> = ({ document }: Props) => {
     const [error, setError] = useState<string | null>(null);
     const [activeEditors, setActiveEditors] = useState<User[]>([]);
     const [inactiveEditors, setInactiveEditors] = useState<User[]>([]);
+    const [inviteEditorModalOpen, setInviteEditorModalOpen] = useState(false);
+    const [newEditor, setNewEditor] = useState<string>('');
 
     const openEditorsModal = async () => {
         setEditorsModalOpen(true);
@@ -67,13 +69,21 @@ const MenuBar: React.FC<Props> = ({ document }: Props) => {
             const result = handleError(err);
             setNotification(result.notification);
             setError(result.message);
-            console.log(err);
         } finally {
             setEditorsModalLoading(false);
         }
     };
 
-    useEffect(() => {}, [editorsModalOpen]);
+    const inviteEditor = async () => {
+        try {
+            await axios.patch(`/documents/${document.documentId}/editors`, { username: newEditor });
+            setNotification({ type: 'success', message: 'Editor invited successfully.' });
+            setInviteEditorModalOpen(false);
+        } catch (err) {
+            const result = handleError(err);
+            setNotification(result.notification);
+        }
+    };
 
     if (!editor) return null;
 
@@ -243,49 +253,68 @@ const MenuBar: React.FC<Props> = ({ document }: Props) => {
             </div>
             <Dialog open={editorsModalOpen} as='div' className='relative z-20 focus:outline-none' onClose={() => setEditorsModalOpen(false)}>
                 <div className='fixed top-0 z-10 h-full w-full bg-black opacity-45' />
-                <div className='fixed inset-0 z-20 w-screen overflow-y-auto'>
-                    <div className='flex min-h-full items-center justify-center p-4'>
-                        <DialogPanel transition className='w-full max-w-md rounded-xl bg-white/5 p-6 backdrop-blur-2xl'>
-                            {editorsModalLoading ? (
-                                <Spinner className='mx-auto my-auto h-10 w-10' />
-                            ) : error !== null ? (
-                                <>
-                                    <DialogTitle as='h3' className='text-base/5 font-medium text-white'>
-                                        Invite Editors
-                                    </DialogTitle>
-                                    <p className='py-4 font-mono text-red-500'>{error}</p>
-                                </>
-                            ) : (
-                                <>
-                                    <DialogTitle as='h3' className='text-base/5 font-medium text-white'>
-                                        Active Editors
-                                    </DialogTitle>
-                                    {activeEditors.map((editor, i) => (
-                                        <div key={i} className='mt-2 flex items-center'>
-                                            <div className='rounded-full bg-white/30 p-3'>{appearanceToIcon(editor.appearance.toString(), 'text-2xl text-white')}</div>
-                                            <p className='ml-2 text-white'>{editor.name}</p>
-                                            <p className='ml-2 text-white/50'>{editor.role[0]?.toUpperCase() + editor.role.slice(1)}</p>
-                                        </div>
-                                    ))}
-                                    {inactiveEditors.length > 0 && (
-                                        <>
-                                            <DialogTitle as='h3' className='text-base/5 font-medium text-white'>
-                                                Inactive Editors
-                                            </DialogTitle>
-                                            {}
-                                        </>
-                                    )}
-                                    <p className='mt-2 cursor-default text-sm/6 text-white/50'>Are you sure you want to navigate to your account? You will lose any unsaved changes.</p>
-                                    <div className='mt-4 flex w-full items-center'>
-                                        <Button onClick={() => {}}>Continue</Button>
-                                        <Button className='ml-2' onClick={() => setEditorsModalOpen(false)}>
-                                            Back
-                                        </Button>
-                                    </div>
-                                </>
-                            )}
-                        </DialogPanel>
-                    </div>
+                <div className='fixed inset-0 z-20 flex min-h-full w-screen items-center justify-center overflow-y-auto p-4'>
+                    <DialogPanel transition className='w-full max-w-md rounded-xl bg-white/5 p-6 backdrop-blur-2xl'>
+                        {editorsModalLoading ? (
+                            <Spinner className='mx-auto my-auto h-10 w-10' />
+                        ) : error !== null ? (
+                            <>
+                                <DialogTitle as='h3' className='text-base/5 font-medium text-white'>
+                                    Invite Editors
+                                </DialogTitle>
+                                <p className='py-4 font-mono text-red-500'>{error}</p>
+                            </>
+                        ) : (
+                            <>
+                                <DialogTitle as='h3' className='text-base/5 font-medium text-white'>
+                                    Active Editors ({activeEditors.length})
+                                </DialogTitle>
+                                {activeEditors.length > 0 ? (
+                                    activeEditors.map((editor, i) => <EditorPreview key={i} editor={editor} />)
+                                ) : (
+                                    <p className='mt-2 cursor-default text-sm/6 text-white/50'>No active editors found.</p>
+                                )}
+                                <DialogTitle as='h3' className='mt-4 text-base/5 font-medium text-white'>
+                                    Inactive Editors ({inactiveEditors.length})
+                                </DialogTitle>
+                                {inactiveEditors.length > 0 ? (
+                                    inactiveEditors.map((editor, i) => <EditorPreview key={i} editor={editor} />)
+                                ) : (
+                                    <p className='mt-2 cursor-default text-sm/6 text-white/50'>No inactive editors found.</p>
+                                )}
+                                <Button
+                                    className='mt-6 w-full'
+                                    onClick={() => {
+                                        setEditorsModalOpen(false);
+                                        setInviteEditorModalOpen(true);
+                                    }}>
+                                    Invite New Editor
+                                </Button>
+                            </>
+                        )}
+                    </DialogPanel>
+                </div>
+            </Dialog>
+            <Dialog open={inviteEditorModalOpen} as='div' className='relative z-20 focus:outline-none' onClose={() => setInviteEditorModalOpen(false)}>
+                <div className='fixed top-0 z-10 h-full w-full bg-black opacity-45' />
+                <div className='fixed inset-0 z-20 flex min-h-full w-screen items-center justify-center overflow-y-auto p-4'>
+                    <DialogPanel transition className='w-full max-w-md rounded-xl bg-white/5 p-6 backdrop-blur-2xl'>
+                        <DialogTitle as='h3' className='text-base/5 font-medium text-white'>
+                            Invite A New Editor
+                        </DialogTitle>
+                        <p className='mt-2 cursor-default text-sm/6 text-white/50'>Enter the username of the new editor.</p>
+                        <input
+                            type='text'
+                            placeholder='Username'
+                            className='mt-2 w-full rounded-llg border border-white/5 bg-light-grey px-3 py-2 text-sm/6 focus-within:outline-none'
+                            value={newEditor}
+                            autoFocus
+                            onChange={(e) => setNewEditor(e.target.value)}
+                        />
+                        <Button className='mt-2 w-full' onClick={inviteEditor}>
+                            Invite
+                        </Button>
+                    </DialogPanel>
                 </div>
             </Dialog>
         </div>

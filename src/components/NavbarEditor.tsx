@@ -62,7 +62,7 @@ const EditorNavbar: React.FC<Props> = ({ document, setDocument, appearance, save
     }, [appearance]);
 
     return (
-        <nav className='fixed left-1/2 top-0 z-50 m-4 mb-8 flex h-12 w-[calc(100svw-2rem)] max-w-[70rem] -translate-x-1/2 items-center justify-between'>
+        <nav className='fixed left-1/2 top-0 z-20 m-4 mb-8 flex h-12 w-[calc(100svw-2rem)] max-w-[70rem] -translate-x-1/2 items-center justify-between'>
             <div className='flex items-center'>
                 <a className='h-full pr-4 md:pr-8' href='/'>
                     <Logo height='2.5rem' width='2.5rem' onlyLogo />
