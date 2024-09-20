@@ -31,7 +31,7 @@ const EditorNavbar: React.FC<Props> = ({ document, setDocument, appearance, save
     const [appearanceState, setAppearance] = useState<string | undefined>(appearance);
     const [appearanceModalOpen, setAppearanceModalOpen] = useState(false);
 
-    const debouncedDocumentTitle = useDebounce(documentTitle, 500);
+    const debouncedDocumentTitle = useDebounce(documentTitle, 3000);
 
     useEffect(() => {
         if (documentTitle !== document.title) {
