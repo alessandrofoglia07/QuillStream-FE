@@ -2,9 +2,9 @@
 
 <br>
 
-# **Modern** Vite React PWA Template
+# QuillStream
 
-This modern template is the perfect starting point for any modern React project. It includes the latest and greatest tools and technologies to help you build your next project.
+A modern collaborative rich text editor built with React.
 
 </div>
 
@@ -13,8 +13,7 @@ This modern template is the perfect starting point for any modern React project.
 ## Table of contents
 
 -   [Installation](#installation)
--   [Features](#features)
--   [Next steps](#next-steps)
+-   [Technologies](#technologies)
 -   [Commands](#commands)
     -   [Default commands](#default-commands)
     -   [Docker commands](#docker-commands)
@@ -24,106 +23,35 @@ This modern template is the perfect starting point for any modern React project.
 
 ## Installation
 
-```bash
-npx create-modern-react-pwa my-app
 ```
+# Clone the repository
+git clone https://github.com/alessandrofoglia07/QuillStream-FE
 
-or
+# Move into the project directory
+cd QuillStream-FE
 
-```
-pnpx create-modern-react-pwa my-app
-```
-
-<br>
-
-## Features
-
-This template includes the following features:
-
-<div style="width: 100%">
-
--   <div style="display: flex; align-items: center; transform: translateY(30%)"><img style="width: 10%; border: none!important; margin-right: 10px; margin-bottom: 20px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/512px-React-icon.svg.png?20220125121207">
-
-    **[React](https://react.dev/)** - A JavaScript library for building user interfaces.
-    </div>
-
--   <div style="display: flex; align-items: center; transform: translateY(30%)"><img style="width: 10%; border: none!important; margin-right: 10px; margin-bottom: 20px" src="https://raw.githubusercontent.com/alessandrofoglia07/modern-vite-react-app/main/public/logos/vite-logo.png">
-
-    **[Vite](https://vitejs.dev/)** - A build tool that aims to provide a faster development experience for modern web projects.
-    </div>
-
--   <div style="display: flex; align-items: center; transform: translateY(30%)"><img style="width: 10%; border: none!important; margin-right: 10px; margin-bottom: 20px" src="https://raw.githubusercontent.com/alessandrofoglia07/modern-vite-react-app/main/public/logos/ts-logo.png">
-
-    **[Typescript](https://www.typescriptlang.org/)** - A strongly typed programming language that builds on JavaScript, giving you better tooling at any scale.
-    </div>
-
--   <div style="display: flex; align-items: center; transform: translateY(10%); margin-top: 2%"><img style="width: 10%; border: none!important; margin-right: 10px; margin-bottom: 10px" src="https://raw.githubusercontent.com/alessandrofoglia07/modern-vite-react-app/main/public/logos/pwa-logo.png">
-
-    **[PWA](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)** - An app that's built using web platform technologies, but that provides a user experience like that of a platform-specific app.
-    </div>
-
--   <div style="display: flex; align-items: center; transform: translateY(30%); margin-top: -20px"><img style="width: 10%; border: none!important; margin-right: 10px; margin-bottom: 20px" src="https://raw.githubusercontent.com/alessandrofoglia07/modern-vite-react-app/main/public/logos/pnpm-logo.png">
-
-    **[pnpm](https://pnpm.io/)** - Fast, disk space efficient package manager.
-    </div>
-
--   <div style="display: flex; align-items: center; transform: translateY(15%)"><img style="width: 10%; border: none!important; margin-right: 10px; margin-bottom: 20px" src="https://raw.githubusercontent.com/alessandrofoglia07/modern-vite-react-app/main/public/logos/docker-logo.png">
-
-    **[Docker](https://www.docker.com/)** - A set of platform as a service products that use OS-level virtualization to deliver software in packages called containers.
-    </div>
-
--   <div style="display: flex; align-items: center; transform: translateY(25%)"><img style="width: 10%; border: none!important; margin-right: 10px; margin-bottom: 20px" src="https://raw.githubusercontent.com/alessandrofoglia07/modern-vite-react-app/main/public/logos/eslint-logo.svg">
-
-    **[ESLint](https://eslint.org/)** - A pluggable and configurable linter tool for identifying and reporting on patterns in JavaScript.
-    </div>
-
--   <div style="display: flex; align-items: center; transform: translateY(25%)"><img style="width: 10%; border: none!important; margin-right: 10px; margin-bottom: 20px" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fbrandslogos.com%2Fwp-content%2Fuploads%2Fimages%2Flarge%2Fprettier-logo.png&f=1&nofb=1&ipt=1c224c986059edaabb2b01cdb02367258fff0b442aa645a1a65d69fe36dfd35b&ipo=images">
-
-    **[Prettier](https://prettier.io/)** - An opinionated code formatter that enforces a consistent code style across your entire codebase.
-    </div>
-
-</div>
-
--   <div style="display: flex; align-items: center; transform: translateY(25%)"><img style="width: 10%; border: none!important; margin-right: 10px; margin-bottom: 20px" src="https://raw.githubusercontent.com/alessandrofoglia07/modern-vite-react-app/main/public/logos/tailwindcss-logo.png">
-
-    **[Tailwind CSS](https://tailwindcss.com/)** - A utility-first CSS framework for rapidly building custom user interfaces.
-    </div>
-
--   <div style="display: flex; align-items: center; transform: translateY(25%)"><img style="width: 10%; border: none!important; margin-right: 10px; margin-bottom: 20px" src="https://raw.githubusercontent.com/alessandrofoglia07/modern-vite-react-app/main/public/logos/headlessui-logo.png">
-
-    **[HeadlessUI](https://headlessui.com/)** - Completely unstyled, fully accessible UI components, designed to integrate beautifully with Tailwind CSS.
-    </div>
-
-</div>
-
-<br>
-<br>
-
-## Next steps
-
-Once you have downloaded or cloned the template, you need to install the dependencies. To do so, run the following command:
-
-```bash
-cd my-app
-```
-
-```bash
+# Install the dependencies
 pnpm install
+
+# Start the development server
+pnpm dev
 ```
-
-Note: If you don't have pnpm installed, you can install it by running the following command:
-
-```bash
-npm install -g pnpm
-```
-
-Once the dependencies are installed, you can delete the default `public/logos` folder and the `README.md` file and start customizing your app!
 
 <br>
+
+## Technologies
+
+-   [TypeScript](https://www.typescriptlang.org/)
+-   [React](https://reactjs.org/)
+-   [Vite](https://vitejs.dev/)
+-   [TailwindCSS](https://tailwindcss.com/)
+-   [Headless UI](https://headlessui.com/)
+-   [TipTap](https://tiptap.dev/)
+-   [Zod](https://zod.dev/)
 
 ## Commands
 
-This template includes the following commands:
+You can use the following commands in the project directory:
 
 ### Default commands
 
@@ -172,8 +100,6 @@ Runs the app in development mode using Docker on Linux. Open [http://localhost:3
 ### `pnpm docker-run:prod`
 
 Runs the app in production mode using Docker. Open [http://localhost:8080](http://localhost:8080) to view it in the browser.
-
-#### You can customize these commmands in the `package.json` file.
 
 <br>
 
